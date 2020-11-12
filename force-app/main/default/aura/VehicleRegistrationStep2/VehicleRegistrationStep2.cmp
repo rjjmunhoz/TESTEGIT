@@ -1,0 +1,149 @@
+<aura:component controller="VehicleRegistrationWizard_ctr">
+
+    <aura:attribute name="recordId" type = "String" access="global"/>
+    <aura:attribute name="vehicleFields" type="Object"/>
+    <aura:attribute name="valueFinances" type="String"/>
+    <aura:attribute name="disableFinanc" type="Boolean" />
+    <aura:attribute name="requiredFinanc" type="Boolean" />
+    <aura:attribute name="showSpinner2" type="Boolean" />
+    <aura:attribute name="tipoModal" type="Boolean" default="false"/>
+    <aura:attribute name="companyList" type="List[]"/>
+    <aura:attribute name="companyListValues" type="String[]"/>
+    <aura:attribute name="sectionDisabled" type="Object"/>
+    <aura:attribute name="sectionDisabledStep2" type="Object"/>
+    
+    <aura:method name="validateFieldsStepMethod" action="{!c.validateFields}" access="public"/>
+
+    <lightning:recordEditForm  recordId="{!v.vehicleFields.Id}" objectApiName="Vehicle__c">
+        <aura:if isTrue="{!v.showSpinner2}">
+            <lightning:spinner alternativeText="Loading" size="medium" />
+        </aura:if>
+        <div class="slds-box slds-m-bottom_small">
+            <div class="slds-grid slds-gutters slds-align_absolute-center">
+                <aura:if isTrue="{!v.showSpinner2}">
+                    <lightning:spinner alternativeText="Loading" size="medium" />
+                </aura:if><!---->
+                <div class="slds-col slds-size_3-of-12">
+                    <lightning:inputField aura:id="field" fieldName="Name" value="{!v.vehicleFields.Name}" disabled="{!v.sectionDisabled.brand}" required="true"/>
+                </div>
+                <div class="slds-col slds-size_2-of-12">
+                    <lightning:inputField aura:id="field" fieldName="plate__c" maxlength="7" value="{!v.vehicleFields.plate__c}" disabled="{!v.sectionDisabled.plate}" required="true"/>
+                </div>   
+                <div class="slds-col slds-size_2-of-12">
+                    <lightning:inputField aura:id="field" fieldName="Color__c" value="{!v.vehicleFields.Color__c}" disabled="{!v.sectionDisabled.color}" required="true"/> 
+                </div>
+                <div class="slds-col slds-size_3-of-12">
+                    <lightning:inputField aura:id="field" fieldName="TypeFuel__c" value="{!v.vehicleFields.TypeFuel__c}" disabled="{!v.sectionDisabled.fuel}" required="true"/>
+                </div>
+            </div>
+            <div class="slds-grid slds-gutters slds-align_absolute-center">
+                <div class="slds-col slds-size_3-of-12">
+                    <lightning:inputField aura:id="field" fieldName="Chassi__c" value="{!v.vehicleFields.Chassi__c}" disabled="true" required="true"/>
+                </div>
+                <div class="slds-col slds-size_2-of-12">
+                    <lightning:inputField aura:id="field" fieldName="YearManufacture__c" value="{!v.vehicleFields.YearManufacture__c}" disabled="{!v.sectionDisabled.manufacture}" required="true"/> 
+                </div>
+                <div class="slds-col slds-size_2-of-12">
+                    <lightning:inputField aura:id="field" fieldName="ModelYear__c" value="{!v.vehicleFields.ModelYear__c}" disabled="{!v.sectionDisabled.yearModel}" required="true"/> 
+                </div>
+                <div class="slds-col slds-size_3-of-12">
+                    <lightning:inputField aura:id="field" fieldName="OwnerName__c" value="{!v.vehicleFields.OwnerName__c}" disabled="{!v.sectionDisabledStep2.nameOwner}" required="true"/> 
+                </div>
+            </div>
+            <div class="slds-grid slds-gutters slds-align_absolute-center">
+                <div class="slds-col slds-size_5-of-12">
+                    <div class="slds-form-element">
+                      	<label class="slds-form-element__label" for="text-input-id-1">
+                        	<abbr class="slds-required" title="obrigatório">* </abbr>Renavam</label>
+                      	<div class="slds-form-element__control">
+                        	<input id="renavam" aura:id="renavamCode"  type="text" name="renavamCode" class="renavam slds-input" onchange="{!c.renavamCode}"/>
+                      	</div>
+                    </div>
+                </div>
+                <div class="slds-col slds-size_5-of-12">
+                    <lightning:inputField fieldName="IPVA__c" value="{!v.vehicleFields.IPVA__c}" disabled="{!v.sectionDisabledStep2.ipva}" required="false"/> 
+                </div> 
+            </div>
+            <div class="slds-grid slds-gutters slds-align_absolute-center">
+                <div class="slds-col slds-size_5-of-12">
+                    <lightning:inputField aura:id="field" fieldName="Restrictions__c" value="{!v.vehicleFields.Restrictions__c}" disabled="true" required="true"/> 
+                </div>
+                <div class="slds-col slds-size_5-of-12">
+                    <lightning:inputField fieldName="TrafficFines__c" value="{!v.vehicleFields.TrafficFines__c}" disabled="{!v.sectionDisabledStep2.traffic}" required="false"/> 
+                </div>
+            </div>
+        </div>
+        <div class="slds-box slds-m-bottom_small">
+            <div class="slds-grid slds-gutters slds-align_absolute-center">
+                <div class="slds-col slds-size_8-of-12">
+                    <div class="slds-grid slds-gutters slds-align_absolute-center">
+                        <div class="slds-col slds-size_4-of-8">
+                            <lightning:inputField aura:id="field" fieldName="Provider__c" value="{!v.vehicleFields.Provider__c}" disabled="{!v.sectionDisabledStep2.provider}" required="true"/>                       
+                        </div>
+                        <div class="slds-col slds-size_4-of-8">
+                            <lightning:inputField aura:id="field" fieldName="TypeModal__c" value="{!v.vehicleFields.TypeModal__c}" disabled="{!v.tipoModal}" required="true"/> 
+                        </div>
+                        
+                    </div>
+                    <div class="slds-grid slds-gutters slds-align_absolute-center">
+                        <div class="slds-col slds-size_4-of-8">
+                            <div class="slds-form-element slds-form-element_horizontal">
+                                <label class="slds-form-element__label" for="text-input-id-1"><abbr class="slds-required" title="obrigatório">*</abbr>Telefone Responsável</label>
+                                <div class="slds-form-element__control">
+                                    <input id="phone" aura:id="phoneRes"  type="text" name="phoneRes" class="phone slds-input" placeholder="(99)9999-9999" onchange="{!c.phoneRes}"/>
+                                </div>                                
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_4-of-8">
+                            <div class="slds-form-element slds-form-element_horizontal">
+                                <label class="slds-form-element__label" for="text-input-id-1"><abbr class="slds-required" title="obrigatório">*</abbr>Telefone Celular</label>
+                                <div class="slds-form-element__control">
+                                    <input id="mobile" aura:id="phoneMobile"  type="text" name="phoneMobile" class="mobile slds-input" placeholder="(99)99999-9999" onchange="{!c.mobilePhone}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-gutters slds-align_absolute-center">
+                        <div class="slds-col slds-size_4-of-8">
+                            <lightning:inputField aura:id="field" fieldName="StandardVehicle__c" value="{!v.vehicleFields.StandardVehicle__c}" required="true" disabled="{!v.sectionDisabledStep2.standardVehicle}"/>
+                        </div>
+
+                        <div class="slds-col slds-size_2-of-8">
+                            <lightning:inputField aura:id="field" fieldName="TypeRegistration__c" value="{!v.vehicleFields.TypeRegistration__c}" disabled="{!v.sectionDisabledStep2.typeRegistration}" required="true"/> 
+                        </div>
+                        
+                        <div class="slds-col slds-size_2-of-8">
+                            <lightning:inputField fieldName="TypeAcquisition__c" value="{!v.vehicleFields.TypeAcquisition__c}" disabled="{!v.sectionDisabledStep2.typeAcquisition}" required="true"/> 
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-gutters slds-align_absolute-center">
+                        <div class="slds-col slds-size_4-of-8">
+                            <lightning:inputField aura:id="field" fieldName="FinancingDate__c" value="{!v.vehicleFields.FinancingDate__c}" required="true" disabled="{!v.sectionDisabledStep2.financingDate}" onchange="{!c.changeFinancingDate}"/>
+                        </div>
+                        <div class="slds-col slds-size_2-of-8">
+                            <lightning:inputField fieldName="FinancingMonth__c" value="{!v.vehicleFields.FinancingMonth__c}" disabled="{!v.disableFinanc}" required="{!v.requiredFinanc}"/> 
+                        </div>
+                        <div class="slds-col slds-size_2-of-8">
+                            <lightning:inputField fieldName="FinancingYear__c" value="{!v.vehicleFields.FinancingYear__c}" disabled="{!v.disableFinanc}" required="{!v.requiredFinanc}"/> 
+                        </div>
+                    </div>
+                
+                </div>
+                <div class="slds-col slds-size_4-of-12">
+                    <lightning:dualListbox name="company"  
+                                            label= "Empresa" 
+                                            sourceLabel="Disponível" 
+                                            selectedLabel="Escolhidos" 
+                                            options="{!v.companyList}" 
+                                            value="{!v.companyListValues}"
+                                            required="true"
+                                            onchange="{!c.changeCompany}"
+                                            disabled="{!v.sectionDisabledStep2.company}"
+                    />
+                </div>
+            </div>
+        </div>
+        <ltng:require scripts="{!join(',', $Resource.jQueryv3, $Resource.jQueryMask)}" afterScriptsLoaded="{!c.loadJquery}" />           
+    </lightning:recordEditForm>
+    
+</aura:component>

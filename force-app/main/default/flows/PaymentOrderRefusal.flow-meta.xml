@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <assignments>
+        <name>PaymentOrderFieldUpdate</name>
+        <label>PaymentOrderFieldUpdate</label>
+        <locationX>859</locationX>
+        <locationY>51</locationY>
+        <assignmentItems>
+            <assignToReference>GetPaymentOrder.Status</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>NF Devolvida</stringValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>GetPaymentOrder.ReasonForRefusal__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>Motivo_da_Recusa1</elementReference>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>GetPaymentOrder.NFNote__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>{!msg1}{!msg2}{!msg3}{!msg4}</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>PaymentOrderUpdate</targetReference>
+        </connector>
+    </assignments>
+    <decisions>
+        <name>PaymentOrderDesicion</name>
+        <label>PaymentOrderDecision</label>
+        <locationX>395</locationX>
+        <locationY>52</locationY>
+        <defaultConnector>
+            <targetReference>Invoice</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Recusada</defaultConnectorLabel>
+        <rules>
+            <name>Status_Diferente_de_Recusada</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>GetPaymentOrder.Status</leftValueReference>
+                <operator>NotEqualTo</operator>
+                <rightValue>
+                    <stringValue>NF Devolvida</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>InvoiceSelection</targetReference>
+            </connector>
+            <label>Status Diferente de NF Devolvida</label>
+        </rules>
+    </decisions>
+    <dynamicChoiceSets>
+        <name>ReasonFoRefusal</name>
+        <dataType>Picklist</dataType>
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
+        <picklistField>ReasonForRefusal__c</picklistField>
+        <picklistObject>Order</picklistObject>
+    </dynamicChoiceSets>
+    <formulas>
+        <name>ValidationNotRefusal</name>
+        <dataType>Boolean</dataType>
+        <expression>NOT({!msg1} = &apos;Caro prestador, enviar a Nota Fiscal/Recibo com as informações corretas:&apos;)</expression>
+    </formulas>
+    <interviewLabel>PaymentOrderRefusal {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>PaymentOrderRefusal</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>Flow</processType>
+    <recordLookups>
+        <name>GetPaymentOrder</name>
+        <label>GetPaymentOrder</label>
+        <locationX>221</locationX>
+        <locationY>50</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>PaymentOrderDesicion</targetReference>
+        </connector>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Order</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Status</queriedFields>
+        <queriedFields>NFNote__c</queriedFields>
+        <queriedFields>ReasonForRefusal__c</queriedFields>
+        <queriedFields>TotalAmount</queriedFields>
+        <queriedFields>CompanyName__c</queriedFields>
+        <queriedFields>CPFCNPJ__c</queriedFields>
+        <queriedFields>Company__c</queriedFields>
+        <queriedFields>CompanyNameFormula__c</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordUpdates>
+        <name>PaymentOrderUpdate</name>
+        <label>PaymentOrderUpdate</label>
+        <locationX>858</locationX>
+        <locationY>286</locationY>
+        <inputReference>GetPaymentOrder</inputReference>
+    </recordUpdates>
+    <screens>
+        <name>Invoice</name>
+        <label>Nota Fiscal</label>
+        <locationX>402</locationX>
+        <locationY>289</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>true</allowPause>
+        <fields>
+            <name>BodyText</name>
+            <fieldText>&lt;p style=&quot;text-align: center;&quot;&gt;&lt;span style=&quot;font-size: 18px;&quot;&gt;Nota fiscal já está recusada!&lt;/span&gt;&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>InvoiceSelection</name>
+        <label>Nota Fiscal</label>
+        <locationX>678</locationX>
+        <locationY>50</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>true</allowPause>
+        <connector>
+            <targetReference>PaymentOrderFieldUpdate</targetReference>
+        </connector>
+        <fields>
+            <name>Motivo_da_Recusa1</name>
+            <choiceReferences>ReasonFoRefusal</choiceReferences>
+            <dataType>String</dataType>
+            <fieldText>Motivo da Recusa</fieldText>
+            <fieldType>DropdownBox</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <fields>
+            <name>msg1</name>
+            <defaultValue>
+                <stringValue>Caro prestador, enviar a Nota Fiscal/Recibo com as informações corretas:</stringValue>
+            </defaultValue>
+            <fieldText>Observação NF</fieldText>
+            <fieldType>LargeTextArea</fieldType>
+            <helpText>&lt;p&gt;Efetue o preenchimento do campo de observação para seguir com o fluxo.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Observação:&lt;/b&gt; O testo pré escrito não pode ser apagado! Caso foi apagado, saia e entre novamente!&lt;/p&gt;</helpText>
+            <isRequired>true</isRequired>
+            <validationRule>
+                <errorMessage>&lt;p&gt;Por favor, complemente o texto com o motivo da recusa da NF.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Atenção: &lt;/b&gt;O texto pré escrito não pode ser apagado! Caso foi apagado, saia do fluxo e entre novamente.&lt;/p&gt;</errorMessage>
+                <formulaExpression>NOT({!msg1} = &apos;Caro prestador, enviar a Nota Fiscal/Recibo com as informações corretas:&apos;)</formulaExpression>
+            </validationRule>
+            <visibilityRule>
+                <conditionLogic>and</conditionLogic>
+                <conditions>
+                    <leftValueReference>Motivo_da_Recusa1</leftValueReference>
+                    <operator>EqualTo</operator>
+                    <rightValue>
+                        <stringValue>Nota fiscal não condizente</stringValue>
+                    </rightValue>
+                </conditions>
+            </visibilityRule>
+        </fields>
+        <fields>
+            <name>msg2</name>
+            <defaultValue>
+                <stringValue>Caro prestador, enviar a Nota Fiscal/Recibo com as informações corretas:
+- Razão Social: {!GetPaymentOrder.CompanyName__c}</stringValue>
+            </defaultValue>
+            <fieldText>Observação NF</fieldText>
+            <fieldType>LargeTextArea</fieldType>
+            <isRequired>false</isRequired>
+            <visibilityRule>
+                <conditionLogic>and</conditionLogic>
+                <conditions>
+                    <leftValueReference>Motivo_da_Recusa1</leftValueReference>
+                    <operator>EqualTo</operator>
+                    <rightValue>
+                        <stringValue>Razão social divergente</stringValue>
+                    </rightValue>
+                </conditions>
+            </visibilityRule>
+        </fields>
+        <fields>
+            <name>msg3</name>
+            <defaultValue>
+                <stringValue>Caro prestador, enviar a Nota Fiscal/Recibo com as informações corretas:
+- Empresa: {!GetPaymentOrder.CompanyNameFormula__c}</stringValue>
+            </defaultValue>
+            <fieldText>Observação NF</fieldText>
+            <fieldType>LargeTextArea</fieldType>
+            <isRequired>false</isRequired>
+            <visibilityRule>
+                <conditionLogic>and</conditionLogic>
+                <conditions>
+                    <leftValueReference>Motivo_da_Recusa1</leftValueReference>
+                    <operator>EqualTo</operator>
+                    <rightValue>
+                        <stringValue>Tomador divergente</stringValue>
+                    </rightValue>
+                </conditions>
+            </visibilityRule>
+        </fields>
+        <fields>
+            <name>msg4</name>
+            <defaultValue>
+                <stringValue>Caro prestador, enviar a Nota Fiscal/Recibo com valor correto:
+R$ {!GetPaymentOrder.TotalAmount}</stringValue>
+            </defaultValue>
+            <fieldText>Observação NF</fieldText>
+            <fieldType>LargeTextArea</fieldType>
+            <isRequired>false</isRequired>
+            <visibilityRule>
+                <conditionLogic>and</conditionLogic>
+                <conditions>
+                    <leftValueReference>Motivo_da_Recusa1</leftValueReference>
+                    <operator>EqualTo</operator>
+                    <rightValue>
+                        <stringValue>Valor divergente</stringValue>
+                    </rightValue>
+                </conditions>
+            </visibilityRule>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <start>
+        <locationX>50</locationX>
+        <locationY>50</locationY>
+        <connector>
+            <targetReference>GetPaymentOrder</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <variables>
+        <name>recordId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+</Flow>

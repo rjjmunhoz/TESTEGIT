@@ -1,0 +1,9 @@
+<aura:component
+    implements="force:lightningQuickAction,lightning:actionOverride,flexipage:availableForRecordHome,force:hasRecordId,lightning:hasPageReference" access="global">
+    <aura:attribute name="spinner" type="Boolean" default="true" />
+    <aura:attribute name="refresh" type="Boolean" default="false" />
+    <aura:attribute name="refreshMessage" type="Boolean" default="false" />
+    <aura:attribute name="recordTypeId" type="String" />
+    <aura:attribute name="recordTypeDeveloperName" type="String" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+</aura:component>

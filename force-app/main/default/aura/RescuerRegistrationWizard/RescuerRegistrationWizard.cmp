@@ -1,0 +1,133 @@
+<aura:component controller="RescuerRegistrationWizard_ctr" implements="lightning:isUrlAddressable">
+
+    <ltng:require scripts="{!join(',', $Resource.jQueryv3, $Resource.jQueryMask)}" afterScriptsLoaded="{!c.loadJquery}" />
+        
+    <aura:attribute name="cpf" type="String" />
+    <aura:attribute name="isSalesforcePlatformUser" type="Boolean" default="false" />
+    <aura:attribute name="resetStepWizard" type="Boolean" default="false" />
+    <aura:attribute name="progressIndicator" type="Boolean" default="true" />
+       
+
+    <aura:attribute name="disabledNext" type="Boolean" default="false" />
+    <aura:attribute name="disabledCancel" type="Boolean" default="false" />
+
+    <aura:attribute name="contact" type="Contact"/>
+    <aura:attribute name="loading" type="Boolean" default="false" />
+    <aura:attribute name="selectedStep" type="String" default="step1" />
+    <aura:attribute name="loadByUrl" type="Boolean" />
+    
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />   
+    <aura:handler name="render" value="{!this}" action="{!c.onRender}"/>
+
+    
+    <article class="slds-card">
+        <div class="slds-card__header slds-grid">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__figure">
+                    <lightning:icon iconName="action:new_contact" size="medium" />
+                </div>
+                <div class="slds-media__body">
+                    <div class="slds-text-heading_medium ">
+                        Cadastro do Colaborador da Base
+                    </div>
+                </div>
+            </header>
+        </div>
+        <!-- Body -->        
+        <div class="slds-card__body slds-card__body_inner">
+            <!-- Barra de Progresso -->
+            <div class="slds-m-around_xx-large">            
+                <lightning:progressIndicator currentStep="{!v.selectedStep}" type="base">
+                    <lightning:progressStep label="Consulta CPF" value="step1"/>
+                    <lightning:progressStep label="Informações sobre o Colaborador da Base" value="step2" onclick="{!c.selectStep2}" />                  
+                    <lightning:progressStep label="Finalização do Cadastro" value="step3" onclick="{!c.selectStep3}" />
+                </lightning:progressIndicator>
+            </div>
+            
+            <aura:if isTrue="{! v.loading }">
+                <lightning:spinner alternativeText="Loading" size="medium" />
+            </aura:if>
+
+            <div class="slds-p-around--medium">
+                <div class="{!v.selectedStep == 'step1' ? 'slds-show slds-m-bottom_large' : 'slds-hide slds-m-bottom_large'}">
+                    <div class="slds-box">
+                        <div class="slds-grid ">
+                            <div class="slds-col slds-size_2-of-6 slds-align_absolute-center">
+                                <div class="slds-form-element">
+                                    <label class="slds-form-element__label" for="text-input-id-1">
+                                        <abbr class="slds-required" title="required">* </abbr>Digite o CPF do Colaborador da Base</label>
+                                    <input id="cpf_field" aura:id="cpf_field" type="text" name="cpf_field" class="cpf_field slds-input" placeholder="999.999.999-99" onchange="{!c.handleCPF}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="{!v.selectedStep == 'step2' ? 'slds-show slds-m-bottom_large' : 'slds-hide slds-m-bottom_large'}">                    
+                    <c:RescuerRegistrationStep2 aura:id="step2CmpId" contact="{!v.contact}" isSalesforcePlatformUser="{!v.isSalesforcePlatformUser}" loading="{!v.loading}"/>
+                </div>
+                <div class="{!v.selectedStep == 'step3' ? 'slds-show slds-m-bottom_large' : 'slds-hide slds-m-bottom_large'}">
+                    <c:RescuerRegistrationStep3 aura:id="step3CmpId" contact="{!v.contact}" loading="{!v.loading}"/>                    
+                </div>
+            </div>
+        </div>
+
+
+        <footer class="slds-card__footer" id="footer">
+            <aura:if isTrue="{!v.selectedStep == 'step2'}">
+                <lightning:button label="Avançar" disabled="{!v.disabledNext}" title="Avançar para a próxima etapa do fluxo" onclick="{!c.handleNext}" />
+            </aura:if>
+
+            <aura:if isTrue="{!v.selectedStep == 'step1'}">
+                <lightning:button label="Consultar" title="Consultar o CPF na Receita Federal"  onclick="{!c.onSearchEmployee}"/>
+            </aura:if>
+
+            <aura:if isTrue="{!v.selectedStep == 'step3'}">                
+                <lightning:button label="Concluir Cadastro" variant="success" title="Concluir o cadastro do Colaborador da Base" onclick="{!c.handleNext}" />
+            </aura:if>
+            <aura:if isTrue="{!v.selectedStep == 'step2' || v.selectedStep == 'step3'}">
+                <lightning:button label="Cancelar" disabled="{!v.disabledCancel}" variant="destructive" title="Cancelar o Fluxo de cadastro desse Colaborador da Base" onclick="{!c.openCancelModal}"/>
+            </aura:if>
+            <lightning:button label="Fechar" title="Fechar a página e retornar à lista de Colaboradores" onclick="{!c.onCloseWizard}" />
+        </footer>
+    </article>
+
+    <div role="dialog" tabindex="-1" aria-labelledby="header43" aura:id="ModalCancel" class="slds-modal">
+        <div class="slds-modal__container">
+            <div class="slds-modal__header">
+                <lightning:buttonIcon iconName="utility:close" onclick="{!c.closeCancelModal}" variant="container" alternativeText="Continuar o fluxo de cadastro do Colaborador da Base"  class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"/>
+                <h2 id="header43" class="slds-text-heading--medium">Cancelar Fluxo de Colaborador da Base</h2>
+            </div>
+            <div class="slds-modal__content slds-p-around--medium">
+                <div class="slds-align_absolute-center">
+                    Tem certeza que deseja cancelar o fluxo de Cadastro do Colaborador da Base?<br/>
+                    Se o fluxo for cancelado ele pode ser iniciado novamente do primeiro passo.
+                </div>
+            </div>
+            <div class="slds-modal__footer">
+                <lightning:button label="Voltar" variant="brand" title="Continuar o fluxo de cadastro do Colaborador da Base" onclick="{!c.closeCancelModal}" />
+                <lightning:button label="Cancelar" variant="destructive" title="Cancelar o Fluxo de cadastro desse Colaborador da Base" onclick="{!c.cancelBaseEmployeesFlow}"/>
+            </div>
+        </div>
+    </div>
+    <div class="slds-backdrop " aura:id="ModalCancelbackdrop"></div>    
+
+
+    <div role="dialog" tabindex="-1" aria-labelledby="header43" aura:id="NotAllowed" class="slds-modal">
+        <div class="slds-modal__container">
+            <div class="slds-modal__header">
+                <lightning:buttonIcon iconName="utility:close" onclick="{!c.onCloseNotAllowedModal}" variant="container" alternativeText="Fechar" class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" />
+                <h2 id="header43" class="slds-text-heading--medium">Reanálise Não Permitida</h2>
+            </div>
+            <div class="slds-modal__content slds-p-around--medium">
+                <div class="slds-align_absolute-center">      
+                    <c:RescuerRegistrationNotAllowed contact="{!v.contact}"/>
+                </div>
+            </div>
+            <div class="slds-modal__footer">
+                <lightning:button label="Página do Colaborador da Base" variant="brand" title="Página do Colaborador da Base" onclick="{!c.redirectToRescuer}" />
+                <lightning:button label="Fechar" variant="brand" title="Fechar" onclick="{!c.onCloseNotAllowedModal}" />
+            </div>
+        </div>
+    </div>
+    <div class="slds-backdrop " aura:id="ModalNotAllowed"></div>
+</aura:component>

@@ -1,0 +1,289 @@
+<aura:component>    
+    <aura:attribute name="providerTypeOptions" type="List" default="[]" />
+    <aura:attribute name="cardSituation" type="Boolean" />
+    <aura:attribute name="accountFields" type="Object" />
+    <aura:attribute name="formSpinner" type="Boolean" default="true"/>
+    <aura:attribute name="paymentTable" type="Boolean"/>
+    <aura:attribute name="developerNameRecordType" type="String"/>
+    <ltng:require styles="{!$Resource.toastMessage}" />
+
+    <aura:if isTrue="{!v.accountFields.LegalSituation__c == 'PJ'}">
+        <div class="slds-box slds-m-bottom_large">
+            <div class="slds-grid slds-gutters slds-align_absolute-center">
+                <div class="slds-col slds-size_4-of-12">
+                    <lightning:input name="fantasyName" disabled="true" label="Nome Fantasia" value="{!v.accountFields.Name}" />
+                </div>
+                <div class="slds-col slds-size_4-of-12">
+                    <lightning:input name="companyName" disabled="true" label="Razão Social" value="{!v.accountFields.CompanyName__c}" />
+                </div>
+            </div>
+            <div class="slds-grid slds-gutters slds-align_absolute-center slds-m-bottom_x-small">
+                <div class="slds-col slds-size_4-of-12">
+                    <lightning:input name="cnpjCard" disabled="true" label="Situação do Cartão CNPJ" value="{!v.accountFields.CardSituation__c}" />
+                </div>
+                <div class="slds-col slds-size_4-of-12">  
+                    <lightning:input name="updatedDate" disabled="true" type="Date" label="Data de Atualização das Informações da Receita" dateStyle="short" value="{!v.accountFields.UpdateDate__c}" />
+                </div>
+            </div>    
+        </div>
+    <aura:if isTrue="{!v.cardSituation}">
+        <div class="{!if(v.formSpinner == true,'slds-show','slds-hide')}">
+            <div class="slds-box slds-m-bottom_large">
+                <!-- <lightning:spinner alternativeText="Loading" size="medium" /> -->
+                <div class="slds-align_absolute-center slds-m-top_large" style="height:4rem">
+                    <div role="status" class="slds-spinner slds-spinner_medium slds-spinner_inline slds-spinner_brand">
+                        <span class="slds-assistive-text">Loading</span>
+                        <div class="slds-spinner__dot-a"></div>
+                        <div class="slds-spinner__dot-b"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="{!if(v.formSpinner == false,'slds-show','slds-hide')}">            
+            <lightning:recordEditForm recordId="{!v.accountFields.Id}" objectApiName="Account" onload="{!c.loadForm}">
+                <div class="slds-box slds-m-bottom_large">
+                    <!-- the messages component is for error messages -->
+                    <lightning:messages />
+                    <div class="slds-grid slds-gutters slds-align_absolute-center">
+                        <div class="slds-col slds-size_4-of-12">
+                            <lightning:inputField fieldName="ContractType__c" value="{!v.accountFields.ContractType__c}" required="true" onchange="{!c.contractType}"/>
+                        </div>
+                        <div class="slds-col slds-size_4-of-12">
+                            <lightning:inputField fieldName="GroupCompanies__c" value="{!v.accountFields.GroupCompanies__c}" required="true" />
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-gutters slds-align_absolute-center">
+                        <div class="slds-col slds-size_2-of-12">
+                            <lightning:inputField fieldName="PayTable__c" aura:id="field" value="{!v.accountFields.PayTable__c}" required="{!(!v.paymentTable)}" disabled="{!v.paymentTable}"/>
+                        </div>
+                        <div class="slds-col slds-size_2-of-12">
+                            <lightning:inputField fieldName="ActuationType__c" value="{!v.accountFields.ActuationType__c}" required="true" />
+                        </div>
+                        <div class="slds-col slds-size_2-of-12">
+                            <lightning:inputField fieldName="HaveParking__c" value="{!v.accountFields.HaveParking__c}" required="true" />
+                        </div>
+                        <div class="slds-col slds-size_2-of-12">
+                            <lightning:inputField fieldName="LegalSituation__c" value="{!v.accountFields.LegalSituation__c}" required="true" disabled="true" />
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-gutters slds-align_absolute-center">
+                        <div class="slds-col slds-size_2-of-12">
+                            <lightning:inputField fieldName="Attend24h__c" value="{!v.accountFields.Attend24h__c}" required="true" disabled="true"/>
+                        </div>
+                        <div class="slds-col slds-size_2-of-12">
+                            <lightning:inputField fieldName="UseChart__c" value="{!v.accountFields.UseChart__c}" required="true" />
+                        </div>
+                        <div class="slds-col slds-size_2-of-12">
+                            <lightning:inputField fieldName="ScheduleType__c" value="{!v.accountFields.ScheduleType__c}" required="true" />
+                        </div>
+                        <div class="slds-col slds-size_2-of-12">
+                            <lightning:inputField fieldName="PaymentMethod__c" value="{!v.accountFields.PaymentMethod__c}"/>
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-gutters slds-align_absolute-center">
+                        <div class="slds-col slds-size_2-of-12">
+                            <lightning:inputField fieldName="ScheduleLink__c" value="{!v.accountFields.ScheduleLink__c}" required="true" />
+                        </div>
+                        <div class="slds-col slds-size_2-of-12">
+                            <lightning:inputField fieldName="ProviderType__c" value="{!v.accountFields.ProviderType__c}" required="true" />
+                        </div>
+                        <div class="slds-col slds-size_2-of-12">
+                            <!-- <lightning:inputField fieldName="OperationalPhone__c" value="{!v.accountFields.OperationalPhone__c}" required="true" /> -->
+                            <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="text-input-id-1"><abbr class="slds-required" title="required">*</abbr>Telefone da Base (Fixo ou Celular)</label>
+                                <input id="mobile" aura:id="mobile" type="text" name="{!index}" class="mobile slds-input" 
+                                       placeholder="(99)9999-99999" onchange="{!c.phone}" pattern="[0-9]{2}-[0-9]{4}-[0-9]{4}"/> 
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_2-of-12">
+                            <!-- <lightning:inputField fieldName="OperationalPhone__c" value="{!v.accountFields.OperationalPhone__c}" required="true" /> -->
+                            <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="text-input-id-1">Outro telefone (Fixo ou Celular)</label>
+                                <input id="mobile" aura:id="mobile2" type="text" name="{!index}" class="mobile slds-input"
+                                    placeholder="(99)9999-99999" onchange="{!c.phone}" pattern="[0-9]{2}-[0-9]{4}-[0-9]{4}"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-gutters slds-align_absolute-center">
+                        <div class="slds-col slds-size_4-of-12">
+                            <lightning:inputField fieldName="Email__c" value="{!v.accountFields.Email__c}" required="true"/>
+                        </div>
+                        <div class="slds-col slds-size_4-of-12">
+                            <lightning:inputField fieldName="Analyst__c" value="{!v.accountFields.Analyst__c}" required="true" />
+                            <!-- <lightning:inputField fieldName="ProviderType__c" value="{!v.accountFields.ProviderType__c}" required="true" /> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-box slds-m-bottom_large">
+                    <div class="slds-grid slds-gutters slds-align_absolute-center">
+                        <div class="slds-col slds-size_2-of-12">
+                            <lightning:inputField fieldName="MunicipalRegistration__c" value="{!v.accountFields.MunicipalRegistration__c}" required="true" />
+                        </div>
+                        <div class="slds-col slds-size_2-of-12">
+                            <lightning:inputField fieldName="StateRegistration__c" value="{!v.accountFields.StateRegistration__c}" required="true" />
+                        </div>
+                        <div class="slds-col slds-size_2-of-12">
+                            <lightning:inputField fieldName="FederalItem__c" value="{!v.accountFields.FederalItem__c}" />
+                        </div>
+                        <div class="slds-col slds-size_2-of-12">
+                            <lightning:inputField fieldName="PIS_NIT__c" value="{!v.accountFields.PIS_NIT__c}" />
+                        </div>
+                    </div> 
+                    <div class="slds-grid slds-gutters slds-align_absolute-center">
+                        <div class="slds-col slds-size_2-of-12">
+                            <lightning:inputField fieldName="OptingForSimple__c" value="{!v.accountFields.OptingForSimple__c}" required="true" />
+                        </div>
+                        <div class="slds-col slds-size_2-of-12">
+                            <lightning:inputField fieldName="PatrimonyLiquid__c" value="{!v.accountFields.PatrimonyLiquid__c}" required="true" />
+                        </div>
+                        <div class="slds-col slds-size_4-of-12">
+                            <lightning:inputField fieldName="AnnualGrossRevenue__c" value="{!v.accountFields.AnnualGrossRevenue__c}" required="true" />
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-gutters slds-align_absolute-center">
+                        <div class="slds-col slds-size_4-of-12">
+                            <lightning:inputField fieldName="CNAE__c" value="{!v.accountFields.CNAE__c}" required="true" disabled="true"/>
+                        </div>
+                        <div class="slds-col slds-size_4-of-12">
+                            <lightning:inputField fieldName="CNAEDescription__c" value="{!v.accountFields.CNAEDescription__c}" required="true" disabled="true"/>
+                        </div>
+                    </div>
+                </div>
+            </lightning:recordEditForm>  
+            <ltng:require scripts="{!join(',', $Resource.jQueryv3, $Resource.jQueryMask)}" afterScriptsLoaded="{!c.loadJquery}" />
+        </div>
+    </aura:if>
+    <aura:set attribute="else">
+		<div class="slds-box slds-m-bottom_large">
+        <div class="slds-grid slds-gutters slds-align_absolute-center">
+            <div class="slds-col slds-size_4-of-12">
+                <lightning:input name="fullName" disabled="true" label="Nome" value="{!v.accountFields.Name}" />
+            </div>
+            <div class="slds-col slds-size_4-of-12">
+            </div>
+        </div>
+        <div class="slds-grid slds-gutters slds-align_absolute-center slds-m-bottom_x-small">
+            <div class="slds-col slds-size_4-of-12">
+                <lightning:input name="cpfCard" disabled="true" label="Situação do CPF" value="{!v.accountFields.CardSituation__c}" />
+            </div>
+            <div class="slds-col slds-size_4-of-12">  
+                <lightning:input name="updatedDate" disabled="true" type="Date" label="Data de Atualização das Informações da Receita" dateStyle="short" value="{!v.accountFields.UpdateDate__c}" />
+                <!-- <lightning:combobox name="providerType" label="Tipo de Prestador" required="true" placeholder="Selecione um Tipo de Prestador" options="{!v.providerTypeOptions}" value="{!v.accountFields.ProviderType__c}"/> -->
+            </div>
+        </div>    
+    </div>
+    <aura:if isTrue="{!v.cardSituation}">
+        <div class="{!if(v.formSpinner == true,'slds-show','slds-hide')}">
+            <div class="slds-box slds-m-bottom_large">
+                <!-- <lightning:spinner alternativeText="Loading" size="medium" /> -->
+                <div class="slds-align_absolute-center slds-m-top_large" style="height:4rem">
+                    <div role="status" class="slds-spinner slds-spinner_medium slds-spinner_inline slds-spinner_brand">
+                        <span class="slds-assistive-text">Loading</span>
+                        <div class="slds-spinner__dot-a"></div>
+                        <div class="slds-spinner__dot-b"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="{!if(v.formSpinner == false,'slds-show','slds-hide')}">            
+            <lightning:recordEditForm recordId="{!v.accountFields.Id}" objectApiName="Account" onload="{!c.loadForm}">
+                <div class="slds-box slds-m-bottom_large">
+                    <!-- the messages component is for error messages -->
+                    <lightning:messages />
+                    <div class="slds-grid slds-gutters slds-align_absolute-center">
+                        <div class="slds-col slds-size_4-of-12">
+                            <lightning:inputField fieldName="ContractType__c" value="{!v.accountFields.ContractType__c}" required="true" onchange="{!c.contractType}"/>
+                        </div>
+                        <div class="slds-col slds-size_4-of-12">
+                            <lightning:inputField fieldName="GroupCompanies__c" value="{!v.accountFields.GroupCompanies__c}" required="true" />
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-gutters slds-align_absolute-center">
+                        <div class="slds-col slds-size_4-of-12">
+                            <lightning:inputField fieldName="LegalSituation__c" value="{!v.accountFields.LegalSituation__c}" required="true" disabled="true" />
+                        </div>
+                        <div class="slds-col slds-size_4-of-12">
+                            <lightning:inputField fieldName="ActuationType__c" value="{!v.accountFields.ActuationType__c}" required="true" />
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-gutters slds-align_absolute-center">
+                        <div class="slds-col slds-size_2-of-12">
+                            <lightning:inputField fieldName="Attend24h__c" value="{!v.accountFields.Attend24h__c}" required="true" />
+                        </div>
+                        <div class="slds-col slds-size_2-of-12">
+                            <lightning:inputField fieldName="UseChart__c" value="{!v.accountFields.UseChart__c}" required="true" />
+                        </div>
+                        <div class="slds-col slds-size_2-of-12">
+                            <lightning:inputField fieldName="ScheduleType__c" value="{!v.accountFields.ScheduleType__c}" required="true" />
+                        </div>
+                        <div class="slds-col slds-size_2-of-12">
+                            <lightning:inputField fieldName="PaymentMethod__c" value="{!v.accountFields.PaymentMethod__c}" required="true"/>
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-gutters slds-align_absolute-center">
+                        <div class="slds-col slds-size_2-of-12">
+                            <lightning:inputField fieldName="ScheduleLink__c" value="{!v.accountFields.ScheduleLink__c}" required="true" />
+                        </div>
+                        <div class="slds-col slds-size_2-of-12">
+                            <lightning:inputField fieldName="ProviderType__c" value="{!v.accountFields.ProviderType__c}" required="true" />
+                        </div>
+                        <div class="slds-col slds-size_2-of-12">
+                            <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="text-input-id-1"><abbr class="slds-required" title="required">*</abbr>Telefone da Base (Fixo ou Celular)</label>
+                                <input id="mobile" aura:id="mobile3" type="text" name="{!index}" class="mobile slds-input" 
+                                       placeholder="(99)9999-99999" onchange="{!c.phonePF}" pattern="[0-9]{2}-[0-9]{4}-[0-9]{4}"/> 
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_2-of-12">
+                            <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="text-input-id-1">Outro telefone (Fixo ou Celular)</label>
+                                <input id="mobile" aura:id="mobile4" type="text" name="{!index}" class="mobile slds-input"
+                                    placeholder="(99)9999-99999" onchange="{!c.phonePF}" pattern="[0-9]{2}-[0-9]{4}-[0-9]{4}"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-gutters slds-align_absolute-center">
+                        <div class="slds-col slds-size_4-of-12">
+                            <lightning:inputField fieldName="Email__c" value="{!v.accountFields.Email__c}" required="true"/>
+                        </div>
+                        <div class="slds-col slds-size_4-of-12">
+                            <lightning:inputField fieldName="Analyst__c" value="{!v.accountFields.Analyst__c}" required="true" />
+                        </div>
+                    </div>
+                </div>
+                <div class="slds-box slds-m-bottom_large">
+                    <div class="slds-grid slds-gutters slds-align_absolute-center">
+                        <div class="slds-col slds-size_2-of-12">
+                            <lightning:inputField fieldName="MunicipalRegistration__c" value="{!v.accountFields.MunicipalRegistration__c}" />
+                        </div>
+                        <div class="slds-col slds-size_2-of-12">
+                            <lightning:inputField fieldName="FederalItem__c" value="{!v.accountFields.FederalItem__c}" />
+                        </div>
+                        <div class="slds-col slds-size_4-of-12">
+                            <lightning:inputField fieldName="PIS_NIT__c" value="{!v.accountFields.PIS_NIT__c}" required="true"/>
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-gutters slds-align_absolute-center">
+                        <div class="slds-col slds-size_4-of-12">
+                            <lightning:inputField fieldName="PatrimonyLiquid__c" value="{!v.accountFields.PatrimonyLiquid__c}" required="true" />
+                        </div>
+                        <div class="slds-col slds-size_4-of-12">
+                            <lightning:inputField fieldName="AnnualGrossRevenue__c" value="{!v.accountFields.AnnualGrossRevenue__c}" required="true" />
+                        </div>
+                    </div>
+                    <div class="slds-grid slds-gutters slds-align_absolute-center">
+                        <div class="slds-col slds-size_4-of-12">
+                            <lightning:inputField fieldName="CNAE__c" value="{!v.accountFields.CNAE__c}" required="false" disabled="false"/>
+                        </div>
+                        <div class="slds-col slds-size_4-of-12">
+                        
+                        </div>
+                    </div>
+                </div>
+            </lightning:recordEditForm>
+            <ltng:require scripts="{!join(',', $Resource.jQueryv3, $Resource.jQueryMask)}" afterScriptsLoaded="{!c.loadJquery}" />
+        </div>
+		</aura:if>
+    </aura:set>
+  </aura:if>
+</aura:component>

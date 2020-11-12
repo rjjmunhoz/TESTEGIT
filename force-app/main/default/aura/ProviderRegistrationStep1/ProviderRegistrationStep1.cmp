@@ -1,0 +1,40 @@
+<aura:component>
+    <aura:attribute name="cnpj" type="String" />
+    <aura:attribute name="cpf" type="String" />
+    <aura:attribute name="accountFields" type="Object" />
+    <aura:attribute name="typePerson" type="String" default = "" />
+    
+    <div class="slds-box">
+        <div class="slds-grid ">
+            <div class="slds-col slds-size_4-of-6 slds-align_absolute-center">
+                <div class="slds-form-element">
+                    <lightning:recordEditForm recordId="{!v.accountFields.Id}" objectApiName="Account">
+                    <lightning:inputField name="person" aura:id="person" fieldName="LegalSituation__c" value="{!v.accountFields.LegalSituation__c}" required="true" onchange="{!c.changePersonType}" />
+                    </lightning:recordEditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="slds-box">
+        <div class="slds-grid ">
+            <div class="slds-col slds-size_2-of-6 slds-align_absolute-center">
+                <div class="slds-form-element">
+                    <aura:if isTrue="{!v.typePerson == 'PJ'}">
+                        <ltng:require scripts="{!join(',', $Resource.jQueryv3, $Resource.jQueryMask)}" afterScriptsLoaded="{!c.loadJquery}" />
+                        <label class="slds-form-element__label" for="text-input-id-1">
+                            <abbr class="slds-required" title="required">* </abbr>Digite o CNPJ do Prestador</label>
+                        <input id="cnpj" aura:id="cnpj" type="text" name="cnpj" maxlength="14" class="cnpj slds-input" placeholder="99.999.999/9999-99" value="{!v.cnpjValue}" onchange="{!c.handleCnpj}" required ="true"/>
+                        <aura:set attribute="else">
+                            <aura:if isTrue="{!v.typePerson == 'PF'}">
+                                <ltng:require scripts="{!join(',', $Resource.jQueryv3, $Resource.jQueryMask)}" afterScriptsLoaded="{!c.loadJquery}" />
+                                <label class="slds-form-element__label" for="text-input-id-1">
+                                    <abbr class="slds-required" title="required">* </abbr>Digite o CPF do Prestador</label>
+                                <input id="cpf" aura:id="cpf" type="text" name="cpf" maxlength="11" class="cpf slds-input" placeholder="99.999.999-99" value="{!v.cpfValue}" onchange="{!c.handleCpf}" required ="true"/>
+                            </aura:if>
+                        </aura:set>
+                    </aura:if>
+                </div>
+            </div>
+        </div>
+    </div>
+</aura:component>

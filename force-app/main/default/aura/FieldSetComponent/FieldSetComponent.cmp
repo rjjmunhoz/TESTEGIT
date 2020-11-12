@@ -1,0 +1,23 @@
+<aura:component implements="force:appHostable,flexipage:availableForAllPageTypes,flexipage:availableForRecordHome,force:hasRecordId" 
+                access="global" 
+                controller="FieldSetComponent_ctr">
+    
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    
+    <!-- define the attributes to be used in the component -->
+    <aura:attribute name="sObjectName" type="String"/> 
+    <aura:attribute name="fieldSet" type="String" />    
+    <aura:attribute name="objectFields" type="String[]" default="[]" />
+
+    <lightning:card iconName="standard:order_item" title="Dados do Item da OP">
+        <div class="slds-p-left_large slds-p-right_medium">
+            <lightning:recordForm
+                recordId="{!v.recordId}"
+                objectApiName="{!v.sObjectName}"
+                fields="{!v.objectFields}"
+                columns="2"
+                mode="view"
+            />
+        </div>
+    </lightning:card>
+</aura:component>

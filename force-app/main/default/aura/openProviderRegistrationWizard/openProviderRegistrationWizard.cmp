@@ -1,0 +1,5 @@
+<aura:component implements="force:lightningQuickAction,lightning:availableForFlowActions">
+    <aura:attribute name="cnpj" type="String" />
+    <aura:attribute name="personType" type="String"/>
+    <aura:attribute name="loadByUrl" type="String"/>
+</aura:component>

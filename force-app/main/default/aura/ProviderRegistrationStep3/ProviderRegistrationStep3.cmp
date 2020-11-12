@@ -1,0 +1,87 @@
+<aura:component>
+    <aura:attribute name="accountFields" type="Object" />
+
+    <aura:attribute name="step3Messages" type="String" />
+    <aura:attribute name="renderReanalysReason" type="Boolean" default="false" />
+    <aura:attribute name="renderReanalyStatus" type="Boolean" default="false" />
+    <aura:attribute name="fields" type="String[]" default="['QuantityChecks__c','ChecksValue__c','QuantityProtests__c','ProtestsValue__c','JudiciaryActions__c','JudiciaryActionsValue__c','ActiveDebts__c','ActiveDebtsValue__c']" />
+    <aura:attribute name="disableTypeReanalysisReason" type="Boolean" default="false" />
+    <aura:attribute name="radarStatus" type="String" />
+    <aura:attribute name="formSpinner" type="Boolean" default="true" />
+
+
+    <div class="slds-box">
+        <aura:if isTrue="{!v.step3Messages != null || v.step3Messages != undefined}">
+            <div class="slds-grid slds-gutters slds-align_absolute-center slds-m-vertical_medium">
+                <div class="slds-box slds-theme_shade slds-theme_alert-texture slds-col slds-size_8-of-12 ">
+                    <aura:unescapedHtml value="{!v.step3Messages}" />
+                </div>
+            </div>
+        </aura:if>
+        <div class="{!if(v.formSpinner == true,'slds-show','slds-hide')}">
+            <!-- <lightning:spinner alternativeText="Loading" size="medium" /> -->
+            <div class="slds-align_absolute-center slds-m-top_large" style="height:4rem">
+                <div role="status" class="slds-spinner slds-spinner_medium slds-spinner_inline slds-spinner_brand">
+                    <span class="slds-assistive-text">Loading</span>
+                    <div class="slds-spinner__dot-a"></div>
+                    <div class="slds-spinner__dot-b"></div>
+                </div>
+            </div>
+        </div>
+        <div class="{!if(v.formSpinner == false,'slds-show','slds-hide')}">
+            <div class="slds-grid slds-gutters slds-align_absolute-center">
+                <div class="slds-col slds-size_4-of-12">
+                    <lightning:input name="radarStatus" disabled="true" label="Status do Radar" value="{!v.radarStatus}" />
+                </div>
+                <div class="slds-col slds-size_2-of-12">
+                    <lightning:input aura:id="radarShippingDate" disabled="true" type="date" name="radarDate" dateStyle="short" label="Data de envio ao Radar" value="{!v.accountFields.RadarShippingDate__c}" />
+                </div>
+                <div class="slds-col slds-size_2-of-12">
+                    <lightning:input aura:id="radarDate" disabled="true" type="date" name="radarDate" dateStyle="short" label="Data de retorno do Radar" value="{!v.accountFields.RadarReturnDate__c}" />
+                </div>
+            </div>
+            <!-- <aura:if isTrue="{!v.accountFields.StatusRadar__c != 'Aguardando Radar'}"> -->
+                <div class="{!if(v.accountFields.StatusRadar__c != 'Aguardando Radar','slds-show','slds-hide')}">
+                    <div class="slds-grid slds-gutters slds-align_absolute-center">
+                        <div class="slds-col slds-size_8-of-12">                        
+                            <lightning:recordEditForm recordId="{!v.accountFields.Id}" objectApiName="Account" onload="{!c.loadForm}">
+                                <lightning:inputField fieldName="RadarDescription__c" value="{!v.accountFields.RadarDescription__c}" disabled="true" />
+                            </lightning:recordEditForm>
+                        </div>
+                    </div>
+                </div>
+            <!-- </aura:if> -->
+            <aura:if isTrue="{! v.renderReanalyStatus == false}">
+                <div class="slds-grid slds-gutters slds-align_absolute-center slds-m-vertical_large">
+                    <div class="slds-col slds-size_4-of-12">
+                        <lightning:input name="reanalisysStatus" disabled="true" label="Status da Reanálise" value="{!v.accountFields.RisksStatus__c}" />
+                    </div> 
+                    <div class="slds-col slds-size_4-of-12">
+                        <lightning:input aura:id="reanalisysDate" type="date" name="reanalisysDate" dateStyle="short" disabled="true" label="Data de retorno da Reanálise" value="{!v.accountFields.ReturnDateRisks__c}" />
+                    </div>                 
+                </div>
+            </aura:if>
+            
+            <aura:if isTrue="{! v.renderReanalysReason == false}">
+                <div class="slds-grid slds-gutters slds-align_absolute-center">
+                    <div class="slds-col slds-size_8-of-12">
+                        <lightning:textarea class="tallTextArea" name="description" disabled="{!v.disableTypeReanalysisReason}" maxlength="255" default="false" label="Justificativa da Reanálise" value="{!v.accountFields.ReanalisysReason__c}" />
+                    </div>
+                </div>
+            </aura:if>
+        </div>
+        <!-- Campos não serão exibidos em tela enquanto não houver integração com os dados retritivos do prestador -->
+       <!--<div class="slds-grid slds-gutters slds-align_absolute-center slds-m-vertical_large">
+            <div class="slds-col slds-size_8-of-12">
+                <lightning:recordForm
+                    recordId="{!v.accountFields.Id}"
+                    objectApiName="Account"
+                    fields="{!v.fields}"
+                    columns="2"
+                    mode="readonly"
+                />
+            </div>
+        </div>--> 
+                      
+    </div>
+</aura:component>

@@ -1,0 +1,19 @@
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId" controller= "POCRequirements_ctr">
+    <aura:attribute name="lRequirements" type="String" default=""/>
+    <aura:attribute name="lExpected" type="String"/>
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="required" type="Boolean" default="false" />
+    <lightning:messages />
+
+        <div class="slds-m-around_large">
+            <lightning:card iconName="action:clone" title="Objetivos">
+                <div class="slds-p-horizontal--small">
+                    <lightning:input aura:id="requirements" required="{!v.required}" label="Objetivos da POC" value="{!v.lRequirements}"/>
+                    <lightning:input aura:id="expected" required="{!v.required}" label="Resultado Esperado" value="{!v.lExpected}"/>
+                    <br />
+                    <lightning:button label="Criar novo objetivo" variant="brand" onclick="{!c.handleSaveCase}" />
+                </div>
+            </lightning:card>
+        </div>
+</aura:component>	
+<!-- <lightning:button variant="brand" label="Criar novo requisito" title="Salvar" type="submit" /> -->

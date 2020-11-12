@@ -1,0 +1,15 @@
+<aura:component implements="force:lightningQuickAction,lightning:actionOverride,flexipage:availableForRecordHome,force:hasRecordId,lightning:hasPageReference" access="global">
+    <aura:attribute name="goRescuerRegistrationWizard" type="Boolean" default="false" />
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+    <aura:if isTrue="{!v.goRescuerRegistrationWizard}">
+        <c:RescuerRegistrationWizard />    
+        <aura:set attribute="else">
+            <div class="exampleHolder">            
+                <div class="slds-align_absolute-center" style="height:5rem">
+                    <lightning:button variant="base" label="Atualize a página ou clique aqui para continuar" title="Atualize a página ou clique aqui para continuar" onclick="{! c.redirect }" />
+                </div>
+            </div>            
+        </aura:set>
+    </aura:if>
+</aura:component>

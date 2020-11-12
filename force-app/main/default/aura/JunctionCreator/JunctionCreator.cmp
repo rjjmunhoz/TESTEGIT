@@ -1,0 +1,43 @@
+<aura:component implements="lightning:isUrlAddressable" >
+    <aura:attribute name="object" type="String" />
+    <aura:attribute name="parentField" type="String" />
+    <aura:attribute name="childField" type="String" />
+    <aura:attribute name="parentId" type="String" />
+    <aura:attribute name="recordTypeId" type="String" />
+    <aura:attribute name="headerTitle" type="String"/>
+    <aura:attribute name="button" type="String" />
+    <aura:attribute name="spinner" type="Boolean" default="true"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}" />
+
+    <div class="slds-backdrop slds-backdrop_open">      
+        <lightning:recordEditForm objectApiName="{!v.object}" recordTypeId="{!v.recordTypeId}" onsuccess="{!c.success}" onsubmit="{!c.submitError}">            
+            <!-- the messages component is for error messages -->
+            <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open slds-modal_small">
+                <div class="slds-modal__container">
+                    <header class="slds-modal__header">
+                        <lightning:buttonIcon iconName="utility:close" onclick="{!c.closeModal}" variant="container" alternativeText="Settings"  class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"/>
+                        <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">{!v.headerTitle}</h2>
+                    </header>
+
+                    <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                        <lightning:messages aura:id="Message"/>
+                        <div class="slds-grid slds-gutters slds-grid_align-center slds-m-bottom_xx-large" style="height: 180px;">
+                            <div class="slds-col slds-size_5-of-12">
+                                <lightning:inputField fieldName="{!v.parentField}" aura:id="ParentField" disabled="true" required = "true"/>
+                            </div>
+                            <div class="slds-col slds-size_5-of-12">
+                                <lightning:inputField fieldName="{!v.childField}" aura:id="ChildField" required = "true"/>
+                            </div>
+                        </div>
+                    </div>
+
+                    <footer class="slds-modal__footer">                        
+                            <lightning:button name="Cancel" label="Cancelar"  aura:id="Cancel" onclick="{!c.closeModal}"/>
+                            <lightning:button name="SaveAndNew" type="submit" label="Salvar e Criar"  aura:id="SaveAndNew" onclick="{!c.clickedButton}"/>
+                            <lightning:button variant="brand" type="submit" name="Save" label="Salvar" aura:id="Save" onclick="{!c.clickedButton }"/>
+                    </footer>                                
+                </div>
+            </section>                            
+        </lightning:recordEditForm>     
+    </div>
+</aura:component>

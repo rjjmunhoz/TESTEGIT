@@ -1,0 +1,25 @@
+<aura:component>
+    <aura:attribute name="accountRecord" type="Object" />
+
+    <aura:if isTrue="{!v.accountRecord.GreaterEqual90Days__c == 'reanalisysRefused'}">
+            <div>
+                Só é possível fazer uma nova análise de um prestador após 90 dias de sua recusa.<br/>
+                O prestador {!v.accountRecord.Name} só poderá passar por uma nova análise a partir de:<br/><br />
+                <p><lightning:formattedDateTime value="{!v.accountRecord.ReanalysisAvailable__c}" year="numeric" month="long" day="2-digit" weekday="long"/></p>
+            </div>
+    </aura:if>
+
+    <aura:if isTrue="{!or(v.accountRecord.Status__c == 'Cancelado', v.accountRecord.Status__c == 'Em implantação')}">
+        <div>
+            Este prestador encontra-se {!v.accountRecord.Status__c}. Não é possível reanalisar um prestador {!v.accountRecord.Status__c}.            
+        </div>
+    </aura:if>
+
+    <aura:if isTrue="{!or(v.accountRecord.Status__c == 'Bloqueado', v.accountRecord.Status__c == 'Ativo')}">       
+        <div class="slds-grid slds-gutters">
+            <div class="slds-col slds-size_1-of-1">
+                Esse Prestador está {!v.accountRecord.Status__c}. Para pedir uma reanálise, inative-o e refaça o fluxo de cadastro. 
+            </div>
+        </div>
+    </aura:if>
+</aura:component>

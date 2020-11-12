@@ -1,0 +1,49 @@
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId" controller="PortfolioAnalysesWizard_ctr">
+    <aura:attribute name="recordId" type="Id"/>
+    <aura:attribute name="caseRecord" type="Object"/>
+    <aura:attribute name="portfolioFields" type="String[]"/>
+    <aura:attribute name="recordLoadError" type="String" />
+    <aura:attribute name="showSpinner" type="Boolean" default="false" />
+    <aura:attribute name="helpMessage" type="String"/>
+    
+    <force:recordData aura:id="recordLoader"
+    recordId="{!v.recordId}"
+    fields="Id,Status,ReturnDescription__c, RecordType.DeveloperName"
+    targetFields="{!v.caseRecord}"
+    targetError="{!v.recordLoadError}"
+    recordUpdated="{!c.onInit}"
+    />
+    
+    <lightning:card  title="">
+        
+        <aura:if isTrue="{!v.showSpinner}">
+            <lightning:spinner/>
+            <aura:set attribute="else">
+                <div class="slds-grid">
+                    <div class="slds-box slds-theme_shade slds-theme_alert-texture slds-col slds-size_1-of-1">
+                        <aura:unescapedHtml value="{!v.helpMessage}" />
+                    </div>
+                </div>
+                <div class="slds-grid">
+                    <div class="slds-col_bump-left slds-m-top_x-small">
+                        <lightning:buttonIcon class="forceListViewManagerHeader" iconName="utility:refresh" alternativeText="Settings" onclick="{!c.onSubmit}" />
+                    </div>
+                </div>
+                <aura:if isTrue="{!not(empty(v.portfolioFields))}">
+                    <div class="slds-p-left_large slds-p-right_medium">
+                        <lightning:recordForm aura:id="caseForm"
+                                    recordId="{!v.recordId}"
+                                    objectApiName="Case"
+                                    fields="{!v.portfolioFields}"
+                                    columns="2"
+                                    mode="View"
+                                    onsubmit="{!c.onSave}"/>
+                    </div>
+                </aura:if>
+                <aura:if isTrue="{!v.caseRecord.Status == 'Análise do Laboratório'}">
+                    <c:POCRequirements recordId="{!v.recordId}" required="{!empty(v.caseRecord.ReturnDescription__c)}"/>
+                </aura:if> 
+            </aura:set>
+        </aura:if>   
+    </lightning:card>
+</aura:component>

@@ -1,0 +1,166 @@
+<aura:component>
+    <!-- <ltng:require scripts="{!join(',', $Resource.jQueryv3, $Resource.jQueryMask)}"
+        afterScriptsLoaded="{!c.loadJquery}" /> -->
+
+    <aura:attribute name="loading" type="Boolean" default="false" />
+    <aura:attribute name="requiredFields" type="Boolean" default="true" />       
+    <aura:attribute name="requiredFieldsWorkRegisterBooklet" type="Boolean" default="true" />        
+    
+    <aura:attribute name="ufOptions" type="Object" default="[]" />
+    <aura:attribute name="publicPlaceOptions" type="Object" default="[]" />
+    <aura:attribute name="shirtOptions" type="Object" default="[]" />
+    <aura:attribute name="pantsOptions" type="Object" default="[]" />
+    <aura:attribute name="bootOptions" type="Object" default="[]" />
+    <aura:attribute name="jacketOptions" type="Object" default="[]" />
+    <aura:attribute name="knittedOptions" type="Object" default="[]" />
+    <aura:attribute name="pepOptions" type="Object" default="[]" />
+    <aura:attribute name="degreeKinshipPortoEmployeeOptions" type="Object" default="[]" />   
+    <aura:attribute name="contact" type="Contact" />
+    <aura:attribute name="companyResponsableMsg" type="String" />
+
+    <aura:method name="validateFieldsStepMethod" action="{!c.validateFields}" access="public"/>
+
+    <c:PickListValues sObjectName="Contact" fieldName="UF__c" picklistValues="{!v.ufOptions}"/>
+    <c:PickListValues sObjectName="Contact" fieldName="PublicPlace__c" picklistValues="{!v.publicPlaceOptions}"/>
+    <c:PickListValues sObjectName="Contact" fieldName="Shirt__c" picklistValues="{!v.shirtOptions}"/>
+    <c:PickListValues sObjectName="Contact" fieldName="Pants__c" picklistValues="{!v.pantsOptions}"/>
+    <c:PickListValues sObjectName="Contact" fieldName="Boot__c" picklistValues="{!v.bootOptions}"/>
+    <c:PickListValues sObjectName="Contact" fieldName="Jacket__c" picklistValues="{!v.jacketOptions}"/>
+    <c:PickListValues sObjectName="Contact" fieldName="Knitted__c" picklistValues="{!v.knittedOptions}"/>
+    <c:PickListValues sObjectName="Contact" fieldName="PEP__c" picklistValues="{!v.pepOptions}"/>
+    <c:PickListValues sObjectName="Contact" fieldName="DegreeKinshipPortoEmployee__c" picklistValues="{!v.degreeKinshipPortoEmployeeOptions}"/>
+
+    <aura:handler name="change" value="{!v.contact.Role__c}" action="{!c.onMandatoryField}"/>
+
+    <div class="slds-box slds-m-bottom_small">
+        <span><b>Endereço {!$Locale.decimal}</b></span>
+        <div class="slds-grid slds-gutters slds-align_absolute-center">
+            <div class="slds-col slds-size_2-of-12">
+                <lightning:combobox aura:id="field" name="PublicPlace" label="Tipo de logradouro" placeholder="Informe o tipo de logradouro" required="true" options="{!v.publicPlaceOptions}" value="{!v.contact.PublicPlace__c}" />
+            </div>
+            <div class="slds-col slds-size_5-of-12">
+                <lightning:input aura:id="field" name="Address" label="Logradouro" required="true" value="{!v.contact.Street__c}" />
+            </div>
+            <div class="slds-col slds-size_2-of-12">
+                <lightning:input aura:id="field" name="Number" label="Número" required="true" value="{!v.contact.Number__c}" />
+            </div>
+            <div class="slds-col slds-size_3-of-12">
+                <lightning:input aura:id="field" name="Complement" label="Complemento" value="{!v.contact.Complement__c}" />
+            </div> 
+            <!--<div class="slds-col slds-size_1-of-12">
+                <lightning:input aura:id="field" name="Cep" label="CEP" required="true" value="{!v.contact.Zip__c}" />
+            </div> -->
+        </div>
+        <div class="slds-grid slds-gutters slds-align_absolute-center">
+            <div class="slds-col slds-size_2-of-12">
+                <lightning:input aura:id="field" name="Cep" label="CEP" required="true" value="{!v.contact.Zip__c}" />
+            </div>     
+            <div class="slds-col slds-size_4-of-12">                
+                <lightning:input aura:id="field" name="District" required="true" label="Bairro" value="{!v.contact.Neighborhood__c}" />
+            </div> 
+            <div class="slds-col slds-size_4-of-12">
+                <lightning:input aura:id="field" name="City" label="Cidade" required="true" value="{!v.contact.City__c}" />
+            </div>    
+            <div class="slds-col slds-size_2-of-12">
+                <lightning:combobox aura:id="field" name="Uf" label="UF" placeholder="Estado" required="true" options="{!v.ufOptions}" value="{!v.contact.Uf__c}" />
+            </div>
+        </div>
+    </div>
+
+    <aura:if isTrue="{!v.requiredFields}">
+        <div class="slds-box slds-m-bottom_small">
+            <span><b>Dados Insumos</b></span>
+            <div class="slds-grid slds-gutters slds-align_absolute-center">
+                <div class="slds-col slds-size_4-of-12">
+                    <lightning:input aura:id="field" name="height" type="number" step="0.01" min="0.5" max="3" label="Altura(m)" required="true" value="{!v.contact.Height__c}" />
+                </div>
+                <div class="slds-col slds-size_4-of-12">
+                    <lightning:input aura:id="field" name="weight" type="number" label="Peso(kg)" step="0.01" min="10" required="true" value="{!v.contact.Weight__c}" />
+                </div>
+                <div class="slds-col slds-size_4-of-12">
+                    <lightning:combobox aura:id="field" name="shirt" label="Camisa" required="true" options="{!v.shirtOptions}" value="{!v.contact.Shirt__c}" />
+                </div>
+            </div>        
+            <div class="slds-grid slds-gutters slds-align_absolute-center">
+                <div class="slds-col slds-size_4-of-12">
+                    <lightning:combobox aura:id="field" name="pants" label="Calça" required="true" options="{!v.pantsOptions}" value="{!v.contact.Pants__c}" />
+                </div>
+                <div class="slds-col slds-size_4-of-12">
+                    <lightning:combobox aura:id="field" name="boot" label="Bota" required="true" options="{!v.bootOptions}" value="{!v.contact.Boot__c}" />
+                </div>
+                <div class="slds-col slds-size_4-of-12">
+                    <lightning:combobox aura:id="field" name="jacket" label="Jaqueta" required="true" options="{!v.jacketOptions}" value="{!v.contact.Jacket__c}" />
+                </div>
+            </div>
+            <div class="slds-grid slds-gutters slds-align_absolute-center">
+                <div class="slds-col slds-size_4-of-12">
+                    <lightning:combobox aura:id="field" name="knitted" label="Malha" required="true" options="{!v.knittedOptions}" value="{!v.contact.Knitted__c}" />
+                </div>
+                <div class="slds-col slds-size_4-of-12">  
+                    
+                </div>
+                <div class="slds-col slds-size_4-of-12">
+                </div>
+            </div>
+        </div>
+    </aura:if>
+    
+    <div class="slds-box slds-m-bottom_small">
+        <span><b>Dados Operacionais</b></span>
+        <div class="slds-grid slds-gutters slds-align_absolute-center">
+            <div class="slds-col slds-size_4-of-12">
+                <lightning:input name="QRA" label="QRA" disabled="true" value="{!v.contact.QRA__c}" />
+            </div>
+            <div class="slds-col slds-size_4-of-12">
+                <lightning:combobox aura:id="field" name="degreeKinshipPortoEmployee" label="Grau de parentesco com a Porto" placeholder="Selecione o grau de parentesco Porto" required="true" options="{!v.degreeKinshipPortoEmployeeOptions}" value="{!v.contact.DegreeKinshipPortoEmployee__c}" />
+            </div> 
+            <div class="slds-col slds-size_4-of-12">
+                <lightning:combobox aura:id="field" name="PEP" label="PEP" required="true" placeholder="Pessoa exposta politicamente?" options="{!v.pepOptions}" value="{!v.contact.PEP__c}" />
+                <!-- <lightning:helptext content="" iconName="utility:info" class="popover"/> -->
+            </div>
+        </div>             
+        
+        <div class="slds-grid slds-gutters slds-align_absolute-center">
+            <div class="slds-col slds-size_4-of-12">
+                <lightning:input aura:id="field" name="workRegisterBookletNumber" label="Número Carteira Profissional" required="{!v.requiredFieldsWorkRegisterBooklet}" maxlength="7" value="{!v.contact.WorkRegisterBookletNumber__c}" />
+            </div>
+            <div class="slds-col slds-size_4-of-12">
+                <lightning:input aura:id="field" name="workRegisterBookletSeries" label="Série Carteira Profissional" required="{!v.requiredFieldsWorkRegisterBooklet}" maxlength="7" value="{!v.contact.WorkRegisterBookletSeries__c}" />
+            </div>
+            <div class="slds-col slds-size_4-of-12">     
+                <lightning:input aura:id="field" name="PISNumber" label="Número do PIS" required="{!v.requiredFieldsWorkRegisterBooklet}" type="number" maxlength="11" value="{!v.contact.PISNumber__c}"/>           
+            </div>
+        </div>  
+
+        <!-- <aura:if isTrue="{!v.requiredFields}"> -->
+            <div class="slds-grid slds-gutters slds-m-top_small slds-align_absolute-center">    
+                <div class="slds-col slds-size_4-of-12">                
+                </div> 
+                <div class="slds-col slds-size_4-of-12">
+                    <lightning:input aura:id="healthInsuranceField" type="toggle" name="healthInsurance" label="Seguro Saúde" onchange="{!c.onHealthInsuranceChange}" value="{!v.contact.HealthInsurance__c}" messageToggleActive="Sim" messageToggleInactive="Não"/>
+                </div>    
+                <div class="slds-col slds-size_4-of-12">
+                    <lightning:input aura:id="dentalField" type="toggle" name="dental" label="Odonto" onchange="{!c.onDentalChange}" value="{!v.contact.Dental__c}" messageToggleActive="Sim" messageToggleInactive="Não"/>
+                </div>
+            </div>  
+        <!-- </aura:if>  -->
+    </div>
+
+    <aura:if isTrue="{!v.requiredFields}">
+        <div class="slds-box slds-m-bottom_small">
+            <span><b>Seguro de Vida</b></span>
+            <div class="slds-grid slds-gutters slds-align_absolute-center">
+                <div class="slds-col slds-size_4-of-12">                    
+                    <lightning:input type="toggle" disabled="true" name="lifeInsurance" label="Status" value="{!v.contact.LifeInsurance__c}" messageToggleActive="Sim" messageToggleInactive="Não"/>
+                </div>
+                <div class="slds-col slds-size_4-of-12">
+                    <lightning:input type="date" disabled="true" name="startTerm" label="Início Vigência" required="true" value="{!v.contact.StartTerm__c}" />
+                </div>
+                <div class="slds-col slds-size_4-of-12">
+                    <lightning:input type="date" disabled="true" name="endTerm" label="Número do Estipulante" required="true" value="{!v.contact.StipulantNumber__c}" />
+                </div>
+            </div>
+        </div>
+    </aura:if>
+
+</aura:component>

@@ -1,0 +1,66 @@
+<aura:component implements="flexipage:availableForAllPageTypes,force:hasRecordId" access="global" controller="EmailForm_ctr">
+    <aura:attribute name="recordId" type="String" />
+    <aura:attribute name="showEmailForm" type="Boolean" />
+    <aura:attribute name="showSpinner" type="Boolean" />
+    <aura:attribute name="loadSpinner" type="Boolean" default="true" />
+    <aura:attribute name="emailList" type="List" />
+    <aura:attribute name="emailBody" type="String"/>
+    <aura:attribute name="attach" type="Boolean" default="false" />
+    <aura:attribute name="emailSubject" type="String"/>    
+
+    <lightning:card title="">
+    <header class="slds-modal__header">
+        <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Email</h2>
+    </header>
+
+    <div class="slds-modal__content slds-p-around_medium " id="modal-content-id-1">
+        <lightning:icon iconName="standard:contact" size="medium" />
+        <lightning:input type="email" name="email" label="Endereço de Email" aura:id="email" />
+        
+        <div class="slds-m-top_small">
+            <lightning:button aura:id="add" label="Adicionar Email" onclick="{!c.addEmailIntoList}" />
+        </div>
+    </div>
+    
+    <div class="slds-modal__content slds-p-around_medium " id="modal-content-id-1">
+        <div class="slds-grid slds-grid--vertical-stretch">
+            <table
+                class="slds-table slds-table_bordered slds-max-medium-table_stacked-horizontal slds-p-horizontal_small"
+                role="grid">
+                <thead>
+                    <tr class="slds-text-title_caps">
+                        <th class="slds-cell-shrink" scope="col">
+                            <div class="slds-truncate" title="Destinatários">Destinatários</div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <aura:iteration items="{!v.emailList}" var="row" indexVar="index">
+                        <tr class="slds-hint-parent">
+                            <td data-label="" scope="row">
+                                <div class="slds-truncate" title="{!row}">{!row}</div>
+                            </td>
+                        </tr>
+                    </aura:iteration>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="slds-modal__content slds-p-around_medium " id="modal-content-id-1">
+        <lightning:input name="subject" label="Assunto" placeholder="Preencha com o assunto"  value="{!v.emailSubject}"/>
+        <lightning:inputRichText variant="bottom-toolbar" value="{!v.emailBody}" placeholder="Escreva sua mensagem aqui." />
+    </div>
+    <div class="slds-align_absolute-center">
+        <lightning:input type="toggle" checked="{!v.attach}" messageToggleActive="Anexar" messageToggleInactive="Não Anexar"
+            label="Deseja anexar no email os itens anexos nesse registro?" name="attachFile" />
+    </div>
+    
+    <footer class="slds-modal__footer">
+            <div class="slds-col_bump-left">
+                <lightning:button aura:id="btnBack" label="Cancelar" onclick="{!c.cancel}" />
+                <lightning:button label="Enviar" onclick="{!c.onSendEmail}" />
+            </div>
+    </footer>
+    </lightning:card>
+</aura:component>

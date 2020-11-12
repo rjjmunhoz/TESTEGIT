@@ -1,0 +1,94 @@
+{
+   "CodigoTipoRegistroSF":1,
+   "CoditoTipoSocorristaCia":1,
+   "CodigoSocorrista":1000,
+   "CodigoPessoa":123,
+   "NomeSocorrista":"JOAO TERNURA",
+   "Status":"A",
+   "DadosPessoais":{
+      "TipoPessoa":"F",
+      "NumeroCpf":"12345678900",
+      "NumeroRG":"594362684",
+      "CodigoUnidadeFederacaoRG":"SP",
+      "DataNascimento":"01/01/1980",
+      "NomePai":null,
+      "NomeMae":null,
+      "NomeConjuge":null,
+      "Nacionalidade":"Brasileiro",
+      "Naturalidade":"SP",
+      "Genero":"M",
+      "EstadoCivil":1,
+      "Email":"joaodieygo@gmail.com",
+      "NumeroTelefoneCelular":"11988839590"
+   },
+   "DadosInsumo":{
+      "AlturaPessoa":1.8,
+      "PesoPessoa":90.0,
+      "NumeroCamisa":"G",
+      "NumeroCalca":44.0,
+      "NumeroCalcado":41.0
+   },
+   "DadosOperacionais":{
+      "NumeroCNH":"12324545454",
+      "CategoriaCHN":[
+         "A",
+         "B"
+      ],
+      "DataPrimeiraCNH":"01-01-2000",
+      "DataVencimentoExameMedico":"31-12-2020",
+      "QuantidadeDependentes":0,
+      "NomeParenteNaCia":null,
+      "NumeroCarteiraProfissional":1233434.0,
+      "NumeroSerieCarteiraProfissional":2323323.0,
+      "CodigoUnidadeFedaracaoCarteiraProfissional":null,
+      "FlagSocorristaMigradoParaClick":"N"
+   },
+   "DadosAnalise":{
+      "CodigoSituacaoAnaliseRadar":1,
+      "DataUltimaAnaliseRadar":"01-02-2020 11:00:00",
+      "CodigoSituacaoAnalisePortoSocorro":1
+   },
+   "DadosSistema":{
+      "DataCadastro":"01-05-1990 11:00:00",
+      "UsuarioCadastro":"F0199999",
+      "DataAtualizacao":"01-05-2020 10:00:00",
+      "UsuarioAtualizacao":"F0113281"
+   },
+   "Endereco":{
+      "CodigoSocorrista":1000,
+      "CodigoTipoEndereco":1,
+      "TipoLogradouro":"Rua",
+      "Logradouro":"Guaianases",
+      "ComplementoLogradouro":"9 andar",
+      "Numero":1238,
+      "PontoReferencia":null,
+      "Observacao":null,
+      "Bairro":"Campos Elisoes",
+      "Cidade":"São Paulo",
+      "UF":"SP",
+      "CEP":"01218000",
+      "NumeroTelefone":"11988839590",
+      "DataCadastro":"01-05-1990 11:00:00",
+      "UsuarioCadastro":"F0199999",
+      "DataAtualizacao":"01-05-2020 10:00:00",
+      "UsuarioAtualizacao":"F0113281"
+   },
+   "Prestador":{
+      "CodigoSocorrista":9090,
+      "CodigoPrestador":1000,
+      "DataInicioVigencia":"01-01-2020",
+      "DataFimVigencia":"31-12-2020",
+      "CodigoTipoVinculo":2,
+      "DataAtualizacao":"01-01-2020 10:00:00",
+      "UsuarioAtualizacao":"F0113281"
+   },
+   "Especialidades":[
+      {
+         "CodigoSocorrista":1000,
+         "Segmento":"AUTO",
+         "CodigoEspecialidade":10,
+         "DataCadastro":"07-05-2020 17:00:00",
+         "UsuarioCadastro":"F0113281"
+      }
+   ]
+}

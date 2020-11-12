@@ -1,0 +1,4 @@
+<design:component>
+   <design:attribute name="cnpj" label="CNPJ" />
+   <design:attribute name="personType" label="Tipo de pessoa" />
+</design:component>

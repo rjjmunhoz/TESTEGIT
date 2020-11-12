@@ -1,0 +1,42 @@
+<aura:component >
+    <aura:attribute name="vehicleFields" type="Object"/>
+    <aura:attribute name="sectionDisabledStep3" type="Object"/>
+    <aura:attribute name="showSpinner" type="Boolean" />
+    <aura:attribute name="dateSurvey" type="Boolean" default="true"/>
+
+    <aura:if isTrue="{!v.showSpinner}">
+        <lightning:spinner alternativeText="Loading" size="medium" />
+    </aura:if>
+
+    <div class="slds-box">
+        <lightning:recordEditForm recordId="{!v.vehicleFields.Id}" objectApiName="Vehicle__c">
+            <div class="slds-grid slds-gutters slds-align_absolute-center"><!---->
+                <div class="slds-col slds-size_4-of-12">
+                    <lightning:inputField fieldName="Nonstop__c" value="{!v.vehicleFields.Nonstop__c}" disabled="{!v.sectionDisabledStep3.semParar}" required="true"/>
+                </div>  
+                <div class="slds-col slds-size_4-of-12">
+                    <lightning:inputField fieldName="Standardization__c" value="{!v.vehicleFields.Standardization__c}" disabled="{!v.sectionDisabledStep3.standardization}" required="true"/>
+                </div>
+            </div>
+            <div class="slds-grid slds-gutters slds-align_absolute-center">
+                <div class="slds-col slds-size_4-of-12">
+                    <lightning:inputField fieldName="InsuranceAuto__c" value="{!v.vehicleFields.InsuranceAuto__c}" disabled="true" required="false"/>
+                </div>
+                <div class="slds-col slds-size_4-of-12">
+                    <lightning:inputField fieldName="SurveyStatus__c" value="{!v.vehicleFields.SurveyStatus__c}" disabled="{!v.sectionDisabledStep3.statusSurvey}" required="true" onchange="{!c.changeDateSurvey}"/>
+                </div>
+            </div>
+            <div class="slds-grid slds-gutters slds-align_absolute-center">
+                <div class="slds-col slds-size_2-of-12">
+                    <lightning:inputField fieldName="InsuranceExpiration__c" value="{!v.vehicleFields.InsuranceExpiration__c}" disabled="true" required="false"/>
+                </div>
+                <div class="slds-col slds-size_2-of-12">
+                    <lightning:inputField fieldName="DateLastSurvey__c" value="{!v.vehicleFields.DateLastSurvey__c}" disabled="{!v.sectionDisabledStep3.dataSurvey}" required="{!v.dateSurvey}"/>
+                </div>
+                <div class="slds-col slds-size_4-of-12">
+                    <lightning:inputField fieldName="VehicleStatus__c" value="{!v.vehicleFields.VehicleStatus__c}" disabled="true" required="false"/>
+                </div>
+            </div>
+        </lightning:recordEditForm>
+    </div>
+</aura:component>

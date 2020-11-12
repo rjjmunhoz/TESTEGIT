@@ -1,0 +1,19 @@
+<aura:component>
+    <aura:attribute name="contact" type="Object" />
+
+    <aura:if isTrue="{!v.contact.GreaterEqual90Days__c == 'reanalisysRefused'}">
+            <div>                
+                Só é possível fazer uma nova análise de um colaborador da base após 90 dias de sua recusa.<br/>
+                Esse colaborador da base {!v.contact.Name} só poderá passar por uma nova análise a partir de:<br/><br />
+                <p><lightning:formattedDateTime value="{!v.contact.ReanalysisAvailable__c}" year="numeric" month="long" day="2-digit" weekday="long"/></p>
+            </div>
+    </aura:if>
+
+    <aura:if isTrue="{!v.contact.GreaterEqual90Days__c == 'reanalisysNotNeeded'}">       
+        <div class="slds-grid slds-gutters">
+            <div class="slds-col slds-size_1-of-1">
+                Esse Colaborador da Base está {!v.contact.Status__c}. Para pedir uma reanálise, inative-o e refaça o fluxo de cadastro. 
+            </div>
+        </div>
+    </aura:if>
+</aura:component>

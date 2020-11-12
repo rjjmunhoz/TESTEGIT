@@ -1,0 +1,127 @@
+<aura:component controller="RescuerRegistrationWizard_ctr">    
+    
+    <aura:attribute name="loading" type="Boolean" default="false" />
+    <aura:attribute name="showRecordForm" type="Boolean" default="true" />    
+    <aura:attribute name="requiredFields" type="Boolean" default="true" />      
+    <aura:attribute name="roleOptions" type="List" default="[]" />
+    <aura:attribute name="genderOptions" type="List" default="[]" />
+    <aura:attribute name="CNHCategoryLevelOptions" type="List" default="[]" />  
+    <aura:attribute name="maritalStatusOptions" type="List" default="[]" />    
+    <aura:attribute name="educationLevelOptions" type="List" default="[]" />    
+
+    <aura:attribute name="contact" type="Contact" />
+    <aura:attribute name="isSalesforcePlatformUser" type="Boolean" />
+    <aura:attribute name="contactProviderFields" type="String[]" default="['AccountId','CompanyCode__c','ContractType__c','ProviderType__c']" />
+
+    <aura:method name="validateFieldsStepMethod" action="{!c.validateFields}" access="public"/>
+
+    <c:PickListValues sObjectName="Contact" fieldName="Role__c" picklistValues="{!v.roleOptions}"/>
+    <c:PickListValues sObjectName="Contact" fieldName="Gender__c" picklistValues="{!v.genderOptions}"/>
+    <c:PickListValues sObjectName="Contact" fieldName="CNHCategory__c" picklistValues="{!v.CNHCategoryLevelOptions}"/>  
+    <c:PickListValues sObjectName="Contact" fieldName="MaritalStatus__c" picklistValues="{!v.maritalStatusOptions}"/>    
+    <c:PickListValues sObjectName="Contact" fieldName="EducationLevel__c" picklistValues="{!v.educationLevelOptions}"/>
+
+    <aura:handler name="change" value="{!v.contact.Role__c}" action="{!c.onMandatoryField}"/>
+    
+    <aura:if isTrue="{!v.isSalesforcePlatformUser}">        
+        <div class="slds-box slds-m-bottom_small">
+            <span><b>Dados do Colaborador {!v.recordId}</b></span>     
+            <div class="slds-grid slds-gutters slds-align_absolute-center slds-m-bottom_x-small">    
+                <div class="slds-col slds-size_12-of-12">
+                    <aura:if isTrue="{!v.showRecordForm}"> 
+                        <lightning:recordForm
+                            recordId="{!v.contact.Id}"
+                            objectApiName="Contact"
+                            fields="{!v.contactProviderFields}"
+                            columns="2"
+                            mode="{!if(v.contact.StepWizard__c != 2, 'readonly', 'view')}"
+                            onsuccess="{!c.onSetAccountId}"
+                        />
+                    </aura:if>
+                </div>
+            </div>
+        </div>
+    </aura:if>
+    <div class="slds-box slds-m-bottom_small">
+        <span><b>Dados do Colaborador da base</b></span>
+        <div class="slds-grid slds-gutters slds-align_absolute-center slds-m-bottom_x-small">    
+            <div class="slds-col slds-size_6-of-12">  
+                <lightning:input name="name" disabled="true" label="Nome" value="{!v.contact.FirstName + ' ' + v.contact.LastName}" />
+            </div>     
+            <div class="slds-col slds-size_6-of-12">  
+                <lightning:combobox aura:id="field" name="role" disabled="{!v.contact.StepWizard__c != 2}" label="Cargo" required="true" placeholder="Selecione o Cargo" options="{!v.roleOptions}" value="{!v.contact.Role__c}" onchange="{!c.onChangeRole}"/>
+            </div>
+        </div> 
+        <div class="slds-grid slds-gutters slds-align_absolute-center slds-m-bottom_x-small">
+            <div class="slds-col slds-size_6-of-12">
+                <lightning:input name="cpf" disabled="true" label="CPF" value="{!v.contact.CPF__c}" />
+            </div>
+            <div class="slds-col slds-size_6-of-12">
+                <lightning:input name="cpfStatus" disabled="true" label="Status CPF" value="{!v.contact.CPFStatus__c}" />
+            </div>  
+        </div>
+
+        <div class="slds-grid slds-gutters slds-align_absolute-center slds-m-bottom_x-small">
+            <div class="slds-col slds-size_6-of-12">
+                <lightning:input aura:id="field" name="motherName" required="true" disabled="{!v.contact.StepWizard__c != 2}" label="Nome da Mãe" value="{!v.contact.MotherName__c}" />
+            </div>
+            <div class="slds-col slds-size_6-of-12">  
+                <lightning:input name="fatherName" disabled="{!v.contact.StepWizard__c != 2}" label="Nome do Pai" value="{!v.contact.FatherName__c}" />
+            </div>  
+        </div>   
+
+        <div class="slds-grid slds-gutters slds-align_absolute-center slds-m-bottom_x-small">            
+            <div class="slds-col slds-size_6-of-12">
+                <lightning:input aura:id="field" name="rg" required="true" disabled="{!v.contact.StepWizard__c != 2}" label="RG" value="{!v.contact.RG__c}" />
+            </div>
+            <div class="slds-col slds-size_6-of-12">  
+                <lightning:input aura:id="field" name="issuingAgency" required="true" disabled="{!v.contact.StepWizard__c != 2}" label="Órgão Emissor" value="{!v.contact.IssuingAgency__c}" />
+            </div>   
+        </div>   
+
+        <div class="slds-grid slds-gutters slds-align_absolute-center slds-m-bottom_x-small">    
+            <div class="slds-col slds-size_6-of-12">
+                <lightning:input aura:id="field" name="birthdate" required="true" disabled="{!v.contact.StepWizard__c != 2}" type="date" label="Data de nascimento" value="{!v.contact.Birthdate}" />
+            </div>                
+            <div class="slds-col slds-size_6-of-12">
+                <lightning:input aura:id="field" name="nationality" required="true" disabled="{!v.contact.StepWizard__c != 2}" label="Naturalidade" value="{!v.contact.Nationality__c}" />
+            </div>
+        </div>  
+
+        <div class="slds-grid slds-gutters slds-align_absolute-center slds-m-bottom_x-small">                
+            <div class="slds-col slds-size_6-of-12">
+                <lightning:input aura:id="field" name="CNHNumber" required="{!v.requiredFields}" maxlength="11" disabled="{!v.contact.StepWizard__c != 2}" label="Número CNH" value="{!v.contact.CNHNumber__c}" />
+            </div>      
+            <div class="slds-col slds-size_6-of-12">
+                <lightning:combobox aura:id="field" name="CNHCategory" required="{!v.requiredFields}" disabled="{!v.contact.StepWizard__c != 2}" label="Categoria de CNH" placeholder="Selecione a Categoria" options="{!v.CNHCategoryLevelOptions}" value="{!v.contact.CNHCategory__c}" onchange="{!c.onChangeField}"/>
+            </div>   
+        </div> 
+
+        <div class="slds-grid slds-gutters slds-align_absolute-center slds-m-bottom_x-small">                
+            <div class="slds-col slds-size_6-of-12">
+                <lightning:input aura:id="field" name="CNHExpirationDate" required="{!v.requiredFields}" type="date" disabled="{!v.contact.StepWizard__c != 2}" label="Validade CNH" value="{!v.contact.CNHExpirationDate__c}" />
+            </div>      
+            <div class="slds-col slds-size_6-of-12">
+                <lightning:input aura:id="field" name="DateOfFirstCNH" required="{!v.requiredFields}" type="date" disabled="{!v.contact.StepWizard__c != 2}" label="Data da primeira CNH" value="{!v.contact.DateOfFirstCNH__c}" />
+            </div>   
+        </div> 
+
+        <div class="slds-grid slds-gutters slds-align_absolute-center slds-m-bottom_x-small">     
+            <div class="slds-col slds-size_6-of-12">
+                <lightning:combobox aura:id="field" name="maritalStatus" required="true" disabled="{!v.contact.StepWizard__c != 2}" label="Estado civil" placeholder="Selecione o Estado civil" options="{!v.maritalStatusOptions}" value="{!v.contact.MaritalStatus__c}" onchange="{!c.onChangeField}"/>
+            </div>       
+            <div class="slds-col slds-size_6-of-12">
+                <lightning:combobox aura:id="field" name="sex" required="true" disabled="{!v.contact.StepWizard__c != 2}" label="Gênero" placeholder="Selecione o Gênero" options="{!v.genderOptions}" value="{!v.contact.Gender__c}"/>
+            </div>   
+        </div>
+        
+        <div class="slds-grid slds-gutters slds-align_absolute-center slds-m-bottom_x-small">                
+            <div class="slds-col slds-size_6-of-12">
+                <lightning:combobox aura:id="field" name="educationLevel" required="true" disabled="{!v.contact.StepWizard__c != 2}" label="Grau de escolaridade" placeholder="Selecione o Grau de escolaridade" options="{!v.educationLevelOptions}" value="{!v.contact.EducationLevel__c}" onchange="{!c.onChangeField}"/>
+            </div>      
+            <div class="slds-col slds-size_6-of-12">
+                <lightning:input aura:id="field" type="email" name="emailContact" required="true" disabled="{!v.contact.StepWizard__c != 2}" placeholder="Insira o email pessoal do Colaborador" label="Email" value="{!v.contact.Email}" />
+            </div>   
+        </div> 
+    </div>
+</aura:component>

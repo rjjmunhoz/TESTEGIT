@@ -1,0 +1,150 @@
+<aura:component controller="ProviderRegistrationWizard_ctr" implements="lightning:isUrlAddressable">
+
+<!-- <aura:component controller="ProviderRegistrationWizard_ctr" implements="lightning:isUrlAddressable,force:lightningQuickAction,lightning:actionOverride,flexipage:availableForRecordHome,lightning:hasPageReference" access="global"> -->
+    <!-- Step 1 -->    
+    <aura:attribute name="cnpj" type="String" default=""/>
+    <aura:attribute name="cpf" type="String" default=""/>
+    <!-- Step 2 -->
+    <aura:attribute name="providerTypeOptions" type="List" default="[]" />
+    <aura:attribute name="cardSituation" type="Boolean" />
+    <aura:attribute name="paymentTable" type="Boolean" default="true"/>
+    <!-- Step 3 -->
+    <aura:attribute name="renderReanalysReason" type="Boolean" default="false" />
+    <aura:attribute name="renderReanalyStatus" type="Boolean" default="false" />
+    <aura:attribute name="step3Messages" type="String" />
+    <aura:attribute name="radarStatus" type="String" />
+    
+    <!-- Step 5 -->
+    <aura:attribute name="bankOptions" type="Object" />
+
+    <aura:attribute name="disabledNext" type="Boolean" default="false" />
+    <aura:attribute name="disabledReanalisys" type="Boolean" default="false" />
+    <aura:attribute name="disabledCancel" type="Boolean" default="false" />
+    <aura:attribute name="partners" type="Object[]"/>
+    <aura:attribute name="deliveryAdress" type="Boolean" default="true"/>
+    <aura:attribute name="taxAdress" type="Boolean" default="true"/>
+    <aura:attribute name="partnersSpinner" type="Boolean" />
+
+    <aura:attribute name="accountFields" type="Object" />
+    <aura:attribute name="loading" type="Boolean" default="false" />
+    <aura:attribute name="selectedStep" type="string" default="step1" />
+    <aura:attribute name="loadByUrl" type="Boolean" />
+    <aura:attribute name="personType" type="String" />
+    <aura:attribute name="disableTypeReanalysisReason" type="Boolean" default="false"/>
+    
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />   
+    
+    <article class="slds-card">
+        <div class="slds-card__header slds-grid">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__figure">
+                    <lightning:icon iconName="standard:account" size="medium" />
+                </div>
+                <div class="slds-media__body">
+                    <div class="slds-text-heading_medium ">
+                        Cadastro de Prestador
+                    </div>
+                </div>
+            </header>
+        </div>
+        <!-- Body -->
+        <div class="slds-card__body slds-card__body_inner">
+            <!-- Barra de Progresso -->
+            <div class="slds-m-around_xx-large">                
+                <lightning:progressIndicator currentStep="{!v.selectedStep}" type="base">
+                    <lightning:progressStep label="Consulta" value="step1" onclick="{!c.selectStep1}" />
+                    <lightning:progressStep label="Informações sobre o Prestador" value="step2" onclick="{!c.selectStep2}" />
+                    <lightning:progressStep label="Análise do Radar" value="step3" onclick="{!c.selectStep3}" />
+                    <lightning:progressStep label="Finalização do Cadastro" value="step4" onclick="{!c.selectStep4}" />
+                    <!-- <lightning:progressStep label="Finalização do Cadastro" value="step5" onclick="{!c.selectStep5}" /> -->
+                </lightning:progressIndicator>
+            </div>
+            
+            <aura:if isTrue="{! v.loading }">
+                <lightning:spinner alternativeText="Loading" size="medium" />
+            </aura:if>
+
+            <div class="slds-p-around--medium">
+                <div class="{!v.selectedStep == 'step1' ? 'slds-show slds-m-bottom_large' : 'slds-hide slds-m-bottom_large'}">
+                    <c:ProviderRegistrationStep1 cnpj="{!v.cnpj}" cpf="{!v.cpf}" accountFields="{!v.accountFields}"/>
+                </div>
+                <div class="{!v.selectedStep == 'step2' ? 'slds-show slds-m-bottom_large' : 'slds-hide slds-m-bottom_large'}">
+                    <c:ProviderRegistrationStep2 paymentTable="{!v.paymentTable}" cardSituation="{!v.cardSituation}" providerTypeOptions="{!v.providerTypeOptions}" accountFields="{!v.accountFields}"/>
+                </div>
+                <div class="{!v.selectedStep == 'step3' ? 'slds-show slds-m-bottom_large' : 'slds-hide slds-m-bottom_large'}">
+                    <c:ProviderRegistrationStep3 radarStatus="{!v.radarStatus}" step3Messages="{!v.step3Messages}" disableTypeReanalysisReason="{!v.disableTypeReanalysisReason}" accountFields="{!v.accountFields}" renderReanalysReason="{!v.renderReanalysReason}" renderReanalyStatus="{!v.renderReanalyStatus}"/>
+                    
+                </div>
+                <div class="{!v.selectedStep == 'step4' ? 'slds-show slds-m-bottom_large' : 'slds-hide slds-m-bottom_large'}">
+                    <c:ProviderRegistrationStep4  deliveryAdress="{!v.deliveryAdress}" partnersSpinner="{!v.partnersSpinner}" accountFields="{!v.accountFields}" bankOptions="{!v.bankOptions}" partners="{!v.partners}" taxAdress="{!v.taxAdress}"/>
+                </div>
+            </div>
+        </div>
+
+
+        <footer class="slds-card__footer" id="footer">
+            <aura:if isTrue="{!v.selectedStep == 'step2' || v.selectedStep == 'step3'}">
+                <lightning:button label="Avançar" disabled="{!v.disabledNext}" title="Avançar para a próxima etapa do fluxo" onclick="{!c.handleNext}" />
+            </aura:if>
+
+            <aura:if isTrue="{!v.selectedStep == 'step1'}">
+                <lightning:button label="Consultar" title="Consultar o CNPJ/CPF na base de dados"  onclick="{!c.searchAccount}"/>
+            </aura:if>
+
+            <aura:if isTrue="{!v.selectedStep == 'step3'}">
+                <lightning:button label="Reanálise" disabled="{!v.disabledReanalisys}" variant="brand" title="Solicitar reanálise à Área de Gestão de Custos e Riscos" onclick="{!c.approvalProcess}"/>
+            </aura:if>
+
+            <aura:if isTrue="{!v.selectedStep == 'step4'}">
+                <lightning:button label="Concluir Cadastro" variant="success" title="Concluir o cadastro do Prestador" onclick="{!c.finish}" />
+            </aura:if>
+
+            <aura:if isTrue="{!v.selectedStep == 'step3' || v.selectedStep == 'step4'}">
+                <lightning:button label="Cancelar" disabled="{!v.disabledCancel}" variant="destructive" title="Cancelar o Fluxo de cadastro desse Prestador" onclick="{!c.openCancelModal}"/>
+            </aura:if>
+
+            <lightning:button label="Fechar" title="Fechar a página e retornar à lista de Clientes e Parceiros" onclick="{!c.handleClose}" />
+        </footer>
+
+    </article>
+
+    <div role="dialog" tabindex="-1" aria-labelledby="header43" aura:id="Modalbox" class="slds-modal">
+        <div class="slds-modal__container">
+            <div class="slds-modal__header">
+                <lightning:buttonIcon iconName="utility:close" onclick="{!c.closeCancelModal}" variant="container" alternativeText="Continuar o fluxo de cadastro do prestador"  class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse"/>
+                <h2 id="header43" class="slds-text-heading--medium">Cancelar Fluxo de Prestador</h2>
+            </div>
+            <div class="slds-modal__content slds-p-around--medium">
+                <div class="slds-align_absolute-center">
+                    Tem certeza que deseja cancelar o fluxo de Cadastro do Prestador?<br/>
+                    Se o fluxo for cancelado ele pode ser iniciado novamente do primeiro passo.
+                </div>
+            </div>
+            <div class="slds-modal__footer">
+                <lightning:button label="Voltar" variant="brand" title="Continuar o fluxo de cadastro do prestador" onclick="{!c.closeCancelModal}" />
+                <lightning:button label="Cancelar" variant="destructive" title="Cancelar o Fluxo de cadastro desse Prestador" onclick="{!c.cancelProviderFlow}"/>
+            </div>
+        </div>
+    </div>
+    <div class="slds-backdrop " aura:id="Modalbackdrop"></div>    
+
+
+    <div role="dialog" tabindex="-1" aria-labelledby="header43" aura:id="NotAllowed" class="slds-modal">
+        <div class="slds-modal__container">
+            <div class="slds-modal__header">
+                <lightning:buttonIcon iconName="utility:close" onclick="{!c.closeNotAllowedModal}" variant="container" alternativeText="Fechar" class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" />
+                <h2 id="header43" class="slds-text-heading--medium">Reanálise Não Permitida</h2>
+            </div>
+            <div class="slds-modal__content slds-p-around--medium">
+                <div class="slds-align_absolute-center">                    
+                    <c:ProviderRegistrationNotAllowed accountRecord="{!v.accountFields}"/>
+                </div>
+            </div>
+            <div class="slds-modal__footer">
+                <lightning:button label="Página do Prestador" variant="brand" title="Página do Prestador" onclick="{!c.redirectToProvider}" />
+                <lightning:button label="Fechar" variant="brand" title="Fechar" onclick="{!c.closeNotAllowedModal}" />
+            </div>
+        </div>
+    </div>
+    <div class="slds-backdrop " aura:id="ModalNotAllowed"></div>
+</aura:component>

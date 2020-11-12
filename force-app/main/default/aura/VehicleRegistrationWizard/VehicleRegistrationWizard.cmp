@@ -1,0 +1,102 @@
+<aura:component controller="VehicleRegistrationWizard_ctr" implements="lightning:actionOverride,force:appHostable,flexipage:availableForAllPageTypes,lightning:isUrlAddressable" access="global" >
+    
+    <aura:attribute name="selectedStep" type="String" default="Step1"/>
+    <aura:attribute name="vehicleFields" type="Object" default="{'Nonstop__c':'', 'Standardization__c':'', 'SurveyStatus__c':'','InsuranceAuto__c':'','VehicleStatus__c':'', 'secondaryphone__c': '', 'phone__c':''}"/>
+    <aura:attribute name="Placa_Chassi" type="String"/>
+    <aura:attribute name="profile" type="String"/>
+    <aura:attribute name="companyList" type="List" />
+    <aura:attribute name="companyListValues" type="String[]" />
+    <aura:attribute name="sectionDisabled" type="Object"/>
+    <aura:attribute name="sectionDisabledStep2" type="Object"/>
+    <aura:attribute name="sectionDisabledStep3" type="Object"/>
+    <aura:attribute name="loadByUrl" type="Boolean" default="false"/>
+    <aura:attribute name="disabledButton1" type="Boolean" default="false"/>
+    <aura:attribute name="disabledButton2" type="Boolean" default="false"/>
+    <aura:attribute name="disabledButton3" type="Boolean" default="false"/>
+    <aura:attribute name="showSpinner" type="Boolean" default="true"/>
+    <aura:attribute name="textInfoStep1" type="String" default=""/>
+    <aura:attribute name="textInfoStep2" type="String" default=""/>
+    <aura:attribute name="textInfoStep3" type="String" default=""/>
+    <aura:attribute name="tipoModal" type="Boolean" default="true"/>
+    <aura:attribute name="dateSurvey" type="Boolean" default="true"/>
+
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" /> 
+    <!-- <aura:handler event="aura:waiting" action="{!c.showSpinnertru}"/>
+    <aura:handler event="aura:doneWaiting" action="{!c.hideSpinner}"/> -->
+
+    <!-- <aura:if isTrue="{!v.showSpinner}">
+        <div aura:id="spinnerId" class="slds-spinner_container">
+            <div class="slds-spinnerbrand  slds-spinner slds-spinnerlarge slds-is-relative" role="alert">
+                <span class="slds-assistive-text">Loading</span>
+                <div class="slds-spinner__dot-a"></div>
+                <div class="slds-spinner__dot-b"></div>
+            </div>
+        </div>
+    </aura:if> -->
+
+    <aura:if isTrue="{!v.showSpinner}">
+        <lightning:spinner alternativeText="Carregando..." size="medium" variant="brand"/>
+    </aura:if>
+    
+    <article class="slds-card">
+        <div class="slds-card__header slds-grid">
+            <header class="slds-media slds-media_center slds-has-flexi-truncate">
+                <div class="slds-media__figure">
+                    <lightning:icon iconName="standard:account" size="medium" />
+                </div>
+                <div class="slds-media__body">
+                    <div class="slds-text-heading_medium ">
+                        Cadastro de Veículo
+                    </div>
+                </div>
+            </header>
+        </div>
+        
+        <div class="slds-card__body slds-card__body_inner">
+            <div class="slds-m-around_xx-large">                
+                <lightning:progressIndicator currentStep="{!v.selectedStep}" type="base">
+                    <lightning:progressStep label="Consulta" value="Step1" onclick="{!c.selectStep1}" />
+                    <lightning:progressStep label="Relacionamento" value="Step2" onclick="{!c.selectStep2}" />
+                    <lightning:progressStep label="Insumos" value="Step3" onclick="{!c.selectStep3}" />
+                </lightning:progressIndicator>
+            </div>
+
+            <div class="slds-p-around--medium ">
+                
+                <div class="{!v.selectedStep == 'Step1' ? 'slds-show slds-m-bottom_large' : 'slds-hide slds-m-bottom_large'}">
+                    <div class="slds-text-heading_medium slds-align_absolute-center colorText">
+                        {!v.textInfoStep1}
+                    </div>
+                    <c:VehicleRegistrationStep1 placaChassi="{!v.Placa_Chassi}" />	
+                </div>
+                <div class="{!v.selectedStep == 'Step2' ? 'slds-show slds-m-bottom_large' : 'slds-hide slds-m-bottom_large'}">
+                    <div class="slds-text-heading_medium slds-align_absolute-center colorText">
+                        {!v.textInfoStep2}
+                    </div>
+                    <c:VehicleRegistrationStep2 aura:id="step2CmpId" vehicleFields="{!v.vehicleFields}" tipoModal="{!v.tipoModal}" companyList="{!v.companyList}" companyListValues="{!v.companyListValues}" sectionDisabled="{!v.sectionDisabled}" sectionDisabledStep2="{!v.sectionDisabledStep2}"/>
+                </div>
+                <div class="{!v.selectedStep == 'Step3' ? 'slds-show slds-m-bottom_large' : 'slds-hide slds-m-bottom_large'}">
+                    <div class="slds-text-heading_medium slds-align_absolute-center colorText">
+                        {!v.textInfoStep3}
+                    </div>
+                    <c:VehicleRegistrationStep3 vehicleFields="{!v.vehicleFields}" sectionDisabledStep3="{!v.sectionDisabledStep3}"/>
+                </div>
+
+            </div>
+        </div>
+        <footer class="slds-card__footer" id="footer">
+            <aura:if isTrue="{!v.selectedStep == 'Step1'}">
+                <lightning:button label="Consultar" title="Consulta" disabled="{!v.disabledButton1}" onclick="{!c.getVehicle}"/>
+            </aura:if>
+            <aura:if isTrue="{! v.selectedStep == 'Step2'}">
+               <lightning:button label="Avançar" title="Avançar para a próxima etapa do fluxo" disabled="{!v.disabledButton2}" onclick="{!c.handleNext}" />
+            </aura:if>
+            <aura:if isTrue="{!v.selectedStep == 'Step3'}">
+               <lightning:button label="Concluir" variant="success" title="" disabled="{!v.disabledButton3}" onclick="{!c.finish}" />
+            </aura:if>
+            <lightning:button label="Fechar" title="Fechar a página e retornar à lista de Clientes e Parceiros" onclick="{!c.handleClose}" />
+        </footer>
+    </article>
+    <div class="slds-backdrop " aura:id="ModalNotAllowed">
+    </div>
+</aura:component>

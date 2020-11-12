@@ -1,0 +1,11 @@
+<aura:component>
+    <aura:attribute name="placaChassi" type="String" />   
+    
+    <div class="slds-box">
+    	<div class="slds-grid slds-gutters slds-align_absolute-center">
+    		<div class="slds-col slds-size_4-of-12">
+                <lightning:input name="valuePlateChassi"  maxlength="24" disabled="false" label="Digite a Placa ou o Chassi do Veículo" value="{!v.placaChassi}" required="true"/><!---->
+       	 	</div>
+    	</div>
+    </div>
+</aura:component>

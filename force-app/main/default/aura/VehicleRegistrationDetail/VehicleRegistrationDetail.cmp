@@ -1,0 +1,19 @@
+<aura:component implements="lightning:actionOverride,flexipage:availableForAllPageTypes,force:hasRecordId,force:hasSObjectName">
+    <aura:attribute name="recordId" type = "String" access="global"/>
+    <aura:attribute name="vehicleFields" type = "Object"/>
+    <aura:attribute name="spinner" type="Boolean" default="true"/>
+    <aura:attribute name="recordLoadError" type="String"/>
+    
+    <aura:if isTrue="{!v.spinner}">
+        <div class="slds-align--absolute-center">
+            <lightning:spinner aura:id="spinner" variant="brand" size="large" />
+        </div>
+    </aura:if>
+    <force:recordData aura:id="recordLoader"
+        recordId="{!v.recordId}"
+        fields="Id, Step__c, plate__c, Chassi__c, StandardVehicle__c"
+        targetFields="{!v.vehicleFields}"
+        targetError="{!v.recordLoadError}"
+        recordUpdated="{!c.onInit}"
+    />  
+</aura:component>
