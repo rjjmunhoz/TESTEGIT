@@ -4,7 +4,7 @@
 * Project:          Porto Socorro
 * Description:      Handler da Trigger de Ability
 *
-* Changes (Version)
+* Changes (Version)-
 * -------------------------------------
 *           No.     Date            Author                  Description     
 *           -----   ----------      --------------------    ---------------   
