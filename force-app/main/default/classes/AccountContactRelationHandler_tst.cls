@@ -4,7 +4,7 @@
 * Project:          Porto Socorro
 * Description:      Classe de teste para cobertura da classe AccountContactRelation
 *
-* Changes (Version)--
+* Changes (Version)---
 * -------------------------------------
 *           No.     Date            Author                  Description     
 *           -----   ----------      --------------------    ---------------   
